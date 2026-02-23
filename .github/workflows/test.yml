@@ -1,0 +1,98 @@
+name: Pinball Experience Tests
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Godot
+        uses: heroiclabs/godot-action@v1
+        with:
+          godot-version: '4.5.1'
+          architecture: 'arm64'
+      
+      - name: Run Unit Tests
+        run: |
+          godot --headless --path . --script test/run_tests.gd 2>&1 | tee test_results.log
+      
+      - name: Check Test Results
+        run: |
+          if grep -q "✗" test_results.log; then
+            echo "Tests failed!"
+            exit 1
+          else
+            echo "All tests passed!"
+          fi
+      
+      - name: Upload Test Results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test_results.log
+
+  screenshot-test:
+    name: Screenshot Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Godot
+        uses: heroiclabs/godot-action@v1
+        with:
+          godot-version: '4.5.1'
+          architecture: 'arm64'
+      
+      - name: Run Screenshot Tests
+        run: |
+          # TODO: Implement screenshot tests when GDSnap is installed
+          echo "Screenshot tests not yet implemented"
+      
+      - name: Upload Screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: test/screenshot/
+
+  console-test:
+    name: Console Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Godot
+        uses: heroiclabs/godot-action@v1
+        with:
+          godot-version: '4.5.1'
+          architecture: 'arm64'
+      
+      - name: Run Console Tests
+        run: |
+          godot --headless --path . --quit-after 3 2>&1 | tee console_output.log
+      
+      - name: Check for Errors
+        run: |
+          if grep -q "ERROR" console_output.log; then
+            echo "Errors found in console output!"
+            exit 1
+          fi
+      
+      - name: Upload Console Output
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: console-output
+          path: console_output.log
