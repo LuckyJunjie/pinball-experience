@@ -22,6 +22,7 @@ This folder describes how we iterate from the **legacy project** to the **target
 | 1_05 | [reviews/REVIEW-AND-OPTIMIZATIONS.md](reviews/REVIEW-AND-OPTIMIZATIONS.md) | Document review and suggested optimizations for requirements, design, and each plan step. |
 | 1_06 | [reviews/COMPREHENSIVE-DOCUMENT-REVIEW.md](reviews/COMPREHENSIVE-DOCUMENT-REVIEW.md) | Full review: consistency, feasibility, AI/Agent-friendliness; builds on REVIEW-AND-OPTIMIZATIONS. |
 | 1_07 | [GLOSSARY.md](GLOSSARY.md) | Key terms (round, bonus, player assets, etc.); link from Requirements §0.1. |
+| 1_08 | [OpenGDD.md](OpenGDD.md) | Open Game Design Document: UI/UX specs, asset-to-component mapping, asset usage list (used/unused/missing). |
 
 ## How to use
 
