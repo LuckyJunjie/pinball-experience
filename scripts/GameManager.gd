@@ -1,0 +1,106 @@
+extends Node
+## GameManager - central game state (BASELINE 0.5 target-shaped state).
+## roundScore, totalScore, multiplier (1-6), rounds (3), status, bonusHistory.
+## Implements: FR-1.2.x, FR-1.5.x, TR-3.3, TR-3.4
+
+signal scored(points: int, source: String)
+signal round_lost(final_round_score: int, multiplier_val: int)
+signal bonus_activated(bonus_type: String)
+signal multiplier_increased(new_value: int)
+signal game_over(final_score: int)
+signal game_started()
+signal ball_spawn_requested
+
+# State (target-shaped for Phase 2)
+var round_score: int = 0
+var total_score: int = 0
+var multiplier: int = 1
+var rounds: int = 3
+var status: String = "waiting"  # waiting | playing | gameOver
+var bonus_history: Array[String] = []
+
+# References (set by Main)
+var balls_container: Node2D
+var launcher: Node2D
+var ball_scene: PackedScene
+
+const MAX_SCORE := 9999999999
+
+func _ready() -> void:
+	_add_input_actions()
+
+func _add_input_actions() -> void:
+	if not InputMap.has_action("flipper_left"):
+		InputMap.add_action("flipper_left")
+		InputMap.action_add_event("flipper_left", _key(KEY_LEFT))
+		InputMap.action_add_event("flipper_left", _key(KEY_A))
+	if not InputMap.has_action("flipper_right"):
+		InputMap.add_action("flipper_right")
+		InputMap.action_add_event("flipper_right", _key(KEY_RIGHT))
+		InputMap.action_add_event("flipper_right", _key(KEY_D))
+	if not InputMap.has_action("launch_ball"):
+		InputMap.add_action("launch_ball")
+		InputMap.action_add_event("launch_ball", _key(KEY_SPACE))
+		InputMap.action_add_event("launch_ball", _key(KEY_DOWN))
+
+func _key(keycode: int) -> InputEventKey:
+	var e := InputEventKey.new()
+	e.keycode = keycode
+	return e
+
+func start_game() -> void:
+	round_score = 0
+	total_score = 0
+	multiplier = 1
+	rounds = 3
+	status = "playing"
+	bonus_history.clear()
+	game_started.emit()
+	spawn_ball_at_launcher()
+
+func spawn_ball_at_launcher() -> void:
+	ball_spawn_requested.emit()
+
+func get_ball_count() -> int:
+	if balls_container == null:
+		return 0
+	return balls_container.get_child_count()
+
+func on_ball_removed() -> void:
+	if get_ball_count() <= 0:
+		on_round_lost()
+
+func on_round_lost() -> void:
+	var final_round := round_score
+	var mult := multiplier
+	total_score += final_round * mult
+	total_score = mini(total_score, MAX_SCORE)
+	round_score = 0
+	multiplier = 1
+	rounds -= 1
+	round_lost.emit(final_round, mult)
+	if rounds <= 0:
+		status = "gameOver"
+		game_over.emit(total_score)
+	else:
+		spawn_ball_at_launcher()
+
+func add_score(points: int, source: String = "") -> void:
+	if status != "playing":
+		return
+	round_score += points
+	round_score = mini(round_score, MAX_SCORE)
+	scored.emit(points, source)
+
+func get_display_score() -> int:
+	return mini(round_score + total_score, MAX_SCORE)
+
+func increase_multiplier() -> void:
+	if multiplier < 6:
+		multiplier += 1
+		multiplier_increased.emit(multiplier)
+
+func add_bonus(bonus_type: String) -> void:
+	if bonus_type not in bonus_history:
+		bonus_history.append(bonus_type)
+	bonus_activated.emit(bonus_type)

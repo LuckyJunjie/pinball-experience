@@ -1,6 +1,6 @@
 # pinball-experience
 
-A pinball game project (Godot 4.x), inspired by Flutter I/O Pinball.
+A pinball game project (Godot 4.5.1), inspired by Flutter I/O Pinball.
 
 ## Document IDs (reading sequence)
 

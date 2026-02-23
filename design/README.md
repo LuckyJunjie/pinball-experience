@@ -4,7 +4,7 @@
 
 ## Overview
 
-This directory contains design documentation for the Pinball game, aligned with **requirements v2.0** ([Requirements.md](../requirements/Requirements.md)). The game replicates the core **I/O Pinball** design (Flutter + Forge2D, Google I/O 2022) in **Godot 4.x**, and extends it with **Store** (coins, upgradable items), **Score Range Board**, and **Level Mode**. Player assets (coins, upgrades) are persisted and shared across Classic and Level modes. Leaderboard and share use local or optional backend.
+This directory contains design documentation for the Pinball game, aligned with **requirements v2.0** ([Requirements.md](../requirements/Requirements.md)). The game replicates the core **I/O Pinball** design (Flutter + Forge2D, Google I/O 2022) in **Godot 4.5.1**, and extends it with **Store** (coins, upgradable items), **Score Range Board**, and **Level Mode**. Player assets (coins, upgrades) are persisted and shared across Classic and Level modes. Leaderboard and share use local or optional backend.
 
 ## Folder structure
 

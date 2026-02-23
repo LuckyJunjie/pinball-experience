@@ -6,7 +6,7 @@
 
 ### 1.1 Engine Settings
 
-**Physics Engine**: Godot 4.5 Built-in Physics (Bullet-based)
+**Physics Engine**: Godot 4.5.1 Built-in Physics (Bullet-based)
 
 **Gravity note:** Requirements TR-3.2 references 30 units/s² (Flutter/Forge2D coordinate system). This project uses **980.0 units/s²** (Godot default, pixel-based) for standard pinball feel. Scale playfield dimensions accordingly if matching Flutter layout.
 

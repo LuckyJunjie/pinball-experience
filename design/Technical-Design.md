@@ -6,7 +6,7 @@
 
 ### 1.1 Purpose
 
-Replicates the Flutter I/O Pinball game in Godot 4.x and extends it with **Store**, **Level Mode**, and **Score Range Board** per [Requirements](../requirements/Requirements.md). The architecture maps Flutter components (GameBloc, StartGameBloc, BackboxBloc) to Godot scenes and scripts; adds **PlayerAssets** (coins, upgrades) persisted and shared across Classic and Level modes. Leaderboard and share use local or optional backend.
+Replicates the Flutter I/O Pinball game in Godot 4.5.1 and extends it with **Store**, **Level Mode**, and **Score Range Board** per [Requirements](../requirements/Requirements.md). The architecture maps Flutter components (GameBloc, StartGameBloc, BackboxBloc) to Godot scenes and scripts; adds **PlayerAssets** (coins, upgrades) persisted and shared across Classic and Level modes. Leaderboard and share use local or optional backend.
 
 ### 1.2 Layers
 

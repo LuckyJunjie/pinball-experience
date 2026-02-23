@@ -1,7 +1,7 @@
 # Pinball Experience – Open Game Design Document (OpenGDD)
 
 **Document ID:** 1_08  
-**Purpose:** AI/Agent-friendly implementation guide with detailed UI/UX specs, asset-to-component mapping, and asset usage tracking. Use this document when implementing the game in Godot 4.x.
+**Purpose:** AI/Agent-friendly implementation guide with detailed UI/UX specs, asset-to-component mapping, and asset usage tracking. Use this document when implementing the game in Godot 4.5.1.
 
 **References:** [Requirements](../requirements/Requirements.md) | [Technical-Design](../design/Technical-Design.md) | [UI-Design](../design/details/UI-Design.md) | [Component-Specifications](../design/details/Component-Specifications.md) | [Asset-Requirements](../design/details/Asset-Requirements.md)
 

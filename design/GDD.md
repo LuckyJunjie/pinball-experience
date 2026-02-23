@@ -7,7 +7,7 @@
 - **Game Title**: Pinball (I/O Pinball–inspired, with Shop, Score Board, Level Mode)
 - **Version**: 2.0
 - **Source**: Same core game design as Flutter I/O Pinball (Google I/O 2022); extended with Store, Score Range Board, and Level Mode per [Requirements](../requirements/Requirements.md).
-- **Engine**: Godot 4.x
+- **Engine**: Godot 4.5.1
 - **Platform**: Desktop and mobile
 
 ---

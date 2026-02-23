@@ -21,7 +21,7 @@
 - **Transform:** Flutter (x, y) → Godot (400 + x×5, 300 + y×5). See [FLUTTER-LAYOUT-AND-ASSETS.md](FLUTTER-LAYOUT-AND-ASSETS.md).
 - **Flippers:** Left (340, 518), Right (424, 518) from Flutter (-12.05, 43.6), (4.8, 43.6).
 - **Launcher:** Godot uses center launcher (400, 518); Flutter has right-side (605, 518.5).
-- **Camera:** Godot 4.x uses fixed center (400, 300), visible height 650 – Flutter zoom/pos formulas were for different viewport.
+- **Camera:** Godot 4.5.1 uses fixed center (400, 300), visible height 650 – Flutter zoom/pos formulas were for different viewport.
 - **Board background:** Flutter board_background.png, scaled 0.5, centered at (400, 300).
 
 ### 4. Game mechanics (already aligned with Flutter)
@@ -35,7 +35,7 @@
 - **Backbox views:** BackboxContent in Main UI: LeaderboardPanel (top 10 list), InitialsPanel (3-letter OptionButtons + Submit), GameOverInfoPanel (after submit). Game Over panel (Replay) shows only after initials submitted (Flutter flow).
 - **Character:** MainMenu sets `BackboxManager.selected_character_key` on character select; game over passes it to `request_initials`.
 
-### 6. Camera focusing (Godot 4.x adapted)
+### 6. Camera focusing (Godot 4.5.1 adapted)
 - **Main._apply_camera_status():** Fixed center (400, 300), visible height 650. Flutter formulas (zoom/pos per status) produced off-screen views; Godot uses single centered view so flippers, launcher, ramp, zones are all visible.
 
 ### 7. Score view parity (this session)

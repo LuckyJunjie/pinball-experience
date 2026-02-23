@@ -1,0 +1,34 @@
+[gd_scene load_steps=4 format=3 uid="uid://obstacle001"]
+
+[ext_resource type="Script" path="res://scripts/Obstacle.gd" id="1_obstacle"]
+[ext_resource type="Texture2D" path="res://assets/sprites/android/bumper/a/dimmed.png" id="2_tex"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bounce"]
+radius = 30.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_trigger"]
+radius = 30.0
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_bumper"]
+bounce = 0.95
+friction = 0.2
+
+[node name="Obstacle" type="Area2D"]
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("1_obstacle")
+points = 5000
+
+[node name="BounceBody" type="StaticBody2D" parent="."]
+collision_layer = 8
+collision_mask = 0
+physics_material_override = SubResource("PhysicsMaterial_bumper")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BounceBody"]
+shape = SubResource("CircleShape2D_bounce")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_trigger")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_tex")

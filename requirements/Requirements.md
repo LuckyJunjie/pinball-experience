@@ -7,7 +7,7 @@
 - **Game Title**: Pinball (I/O Pinball–inspired, with Shop, Score Board, Level Mode)
 - **Version**: 2.0
 - **Source**: Same core functions and game design as Flutter I/O Pinball (Google I/O 2022); extended with shopping, score range board, and level mode.
-- **Engine**: Godot 4.x
+- **Engine**: Godot 4.5.1
 - **Platform**: Desktop and mobile (no Firebase required; leaderboard/share via local or optional backend)
 
 ---
@@ -272,7 +272,7 @@ Point values and **trigger → points** mapping (for unambiguous assignment):
 
 ## 4. Technical Requirements
 
-- **TR-3.1**: Engine: Godot 4.x.
+- **TR-3.1**: Engine: Godot 4.5.1.
 - **TR-3.2**: Physics: 2D physics. **Exact parameters** (for consistent behavior across platforms):
 
 | Material / Body | Gravity (world) | Restitution (bounce) | Friction | Notes |
