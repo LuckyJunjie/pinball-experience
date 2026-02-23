@@ -1,0 +1,20 @@
+[gd_resource type="TileSet" load_steps=4 format=3 uid="uid://beo7xipfqad1o"]
+
+[ext_resource type="Texture2D" uid="uid://b2gbdkojs0e6f" path="res://assets/sprites/wall.png" id="1_wall_texture"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_pipe_maze"]
+friction = 0.1
+bounce = 0.3
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_pipe"]
+texture = ExtResource("1_wall_texture")
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+0:1/0 = 0
+0:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+
+[resource]
+physics_layer_0/collision_layer = 4
+physics_layer_0/collision_mask = 0
+physics_layer_0/physics_material = SubResource("PhysicsMaterial_pipe_maze")
+sources/0 = SubResource("TileSetAtlasSource_pipe")
