@@ -27,7 +27,7 @@ Evolve the **Phase 0 baseline** to **full requirements** ([../requirements/Requi
 
 ### Step 2.2 – Game state and scoring (requirements shape)
 
-- **Item:** State: roundScore, totalScore, multiplier (1–6), rounds (3), bonusHistory, status (waiting | playing | gameOver). Round lost: totalScore += roundScore × multiplier; roundScore = 0; multiplier = 1; rounds -= 1; if rounds == 0 → gameOver. Display score = roundScore + totalScore (capped). Scoring only when status == playing.
+- **Item:** State: roundScore, totalScore, multiplier (1–6), rounds (3), bonusHistory, status (waiting | playing | gameOver). Round lost: totalScore += roundScore × multiplier; roundScore = 0; multiplier = 1; rounds -= 1; if rounds == 0 → gameOver. Display score = roundScore + totalScore **capped at 9999999999** (per FR-1.2.2). Scoring only when status == playing.
 - **Refs:** FR-1.2.x, FR-1.5.x, TR-3.3, TR-3.4.
 - **Test:** Round lost → totalScore increased by roundScore × multiplier; roundScore and multiplier reset; rounds decrement; at rounds == 0, status = gameOver.
 
@@ -79,7 +79,7 @@ Evolve the **Phase 0 baseline** to **full requirements** ([../requirements/Requi
 
 ### Step 2.10 – Bonus ball (5s) from Google Word / Dash Nest
 
-- **Item:** When **googleWord** or **dashNest** bonus triggers → 5 s timer → spawn **bonus ball** at DinoWalls position with impulse toward center. Multiball indicators (4) animate when bonus ball earned.
+- **Item:** When **googleWord** or **dashNest** bonus triggers → **one** shared 5 s timer → spawn **one** bonus ball at DinoWalls position with impulse toward center. If both googleWord and dashNest trigger before the 5 s spawn, use one timer and one spawn (no double spawn); document behavior in Game-Flow or GDD. Multiball indicators (4) animate when bonus ball earned. Can be implemented in same PR as Step 2.11.
 - **Refs:** FR-1.3.4, FR-1.6.2, FR-1.6.3, FR-1.7.10.
 - **Test:** Trigger googleWord (or dashNest) → after 5 s one extra ball spawns at DinoWalls; multiball indicators show active.
 
@@ -203,7 +203,7 @@ Evolve the **Phase 0 baseline** to **full requirements** ([../requirements/Requi
 
 ### Step 2.30 – Polish and NFRs
 
-- **Item:** **Performance:** 60 FPS target; low input latency. **Audio:** Bumper, kicker, rollover, drain, launch, bonus, multiplier; optional score popups and UI feedback. **Assets:** Align with Asset-Requirements where missing; placeholders OK.
+- **Item:** **Performance:** **60 FPS** target (NFR-2.1); input latency &lt; 100 ms (or measure and document). **Audio:** Bumper, kicker, rollover, drain, launch, bonus, multiplier; optional score popups and UI feedback. **Assets:** Align with Asset-Requirements where missing; placeholders OK.
 - **Refs:** NFR-2.1, NFR-2.2, NFR-2.4; design Asset-Requirements.
 - **Test:** FPS and latency acceptable; sounds play on correct events.
 
@@ -213,7 +213,7 @@ Evolve the **Phase 0 baseline** to **full requirements** ([../requirements/Requi
 
 ### Step 2.31 – Player assets and persistence
 
-- **Item:** **Player assets** (coins, purchased upgrades, level progress) with **persistence**: load on session start, save on change. Single data layer shared by Classic and Level modes. No Store UI yet — just data + save/load (e.g. JSON or Godot save).
+- **Item:** **Player assets** (coins, purchased upgrades, level progress) with **persistence**: load on session start, save on change. Use a **single save file or key** (e.g. `user://player_assets.json`) so Classic and Level read/write the same data. No Store UI yet — just data + save/load.
 - **Refs:** FR-5.1.3, FR-5.2.2, FR-7.5, FR-7.6.
 - **Test:** Change coins/upgrades in memory → save → restart app → load → same values. Classic and Level read/write same asset instance.
 
@@ -318,7 +318,7 @@ Evolve the **Phase 0 baseline** to **full requirements** ([../requirements/Requi
 - **2.24, 2.25:** Multiplier visuals, bonus history display.
 - **2.26 → 2.27:** Backbox leaderboard/initials, then share.
 - **2.28 → 2.30:** Kickers, launcher/input, polish.
-- **2.31:** Player assets + persistence (before Store and Level Mode).
+- **2.31:** Player assets + persistence (before Store and Level Mode). 2.31 before 2.32, 2.33, 2.39 (player assets and persistence are required for Store and Level).
 - **2.32:** Main menu Play / Levels / Store (flow).
 - **2.33 → 2.37:** Coin earning → Store scene → upgradable items → character-themed → post-game grant.
 - **2.38:** Score Range Board (after coins and post-game).

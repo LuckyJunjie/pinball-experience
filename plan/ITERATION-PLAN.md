@@ -45,6 +45,10 @@ We iterate **from the legacy project’s archived v3.0 (working)** **to the targ
 - Coverage of: game state (score, rounds, multiplier), drain/round-lost, skill shot, multiplier, multiball, combo (if present), and critical UI/flow.
 - Documented how to run tests and what they cover.
 
+**Minimum test set** (prefer at least): one test for round_lost/game_over; one for scoring (add_score → roundScore); one for multiplier increase and reset; one for bonus ball spawn (if applicable).
+
+**Minimum test set (prefer at least):** one test for round_lost/game_over; one for scoring (add_score → roundScore); one for multiplier increase and reset; one for bonus ball spawn (if applicable).
+
 **Principle:** Tests protect the baseline; every Phase 2 step should keep or extend tests, not remove them.
 
 ---
@@ -63,7 +67,7 @@ We iterate **from the legacy project’s archived v3.0 (working)** **to the targ
 - **Score Range Board:** Score brackets, rewards, progress display; see step 2.38.
 - **Level Mode:** Level Select, level playfields with custom layouts and objectives, same physics and player assets as Classic; level progress and rewards; see steps 2.39–2.44.
 
-**Order of work:** See [FEATURE-STEPS.md](FEATURE-STEPS.md). Each step = **one mechanism or one component** + test; we update the same codebase after each step.
+**Order of work:** See [FEATURE-STEPS.md](FEATURE-STEPS.md). Each step = **one mechanism or one component** + test; we update the same codebase after each step. If a step is too large, split into sub-steps (e.g. 2.26a Backbox layout, 2.26b Leaderboard data, 2.26c Initials submit); keep one item per sub-step. If a step is too large, split into sub-steps (e.g. 2.26a Backbox layout, 2.26b Leaderboard data, 2.26c Initials submit); keep one item per sub-step.
 
 **Principle:** No separate “v3” vs “target” branches in this repo. One main line of development; each step keeps the game runnable and tests passing.
 

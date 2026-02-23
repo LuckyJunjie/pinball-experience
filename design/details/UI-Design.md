@@ -45,7 +45,7 @@ This specification replaces and extends the original with:
 **Layout**:
 - Full-screen CanvasLayer with a **dynamic background** (character-themed art cycle or looping video, or parallax playfield elements).
 - Centered vertical stack of large buttons:
-  - **Play** (Classic mode)
+  - **Play** (Classic mode; label may be "Play" or "Classic" per requirements)
   - **Levels** (Level mode)
   - **Store**
   - **Settings** (optional)
@@ -287,7 +287,8 @@ HUD (CanvasLayer)
 ├── TopBar (MarginContainer) - anchors top
 │   ├── ScoreLabel (Label)
 │   ├── MultiplierBadge (PanelContainer + Label)
-│   └── RoundsContainer (HBoxContainer of TextureRect - ball icons)
+│   ├── RoundsContainer (HBoxContainer of TextureRect - ball icons)
+│   └── MultiballIndicators (HBoxContainer) - 4 TextureRects; blink when bonus ball earned
 ├── BottomBar (MarginContainer) - anchors bottom, optional
 │   ├── BonusHistory (HBoxContainer of TextureRect)
 │   └── ChargeMeter (ProgressBar) - visible only when ball in launcher
@@ -340,6 +341,7 @@ HUD (CanvasLayer)
 - [ ] Level Select: map or list, level nodes (locked/unlocked), level popup (objective, reward, Play), Back.
 - [ ] Score Range Board: overlay with brackets, progress bars, rewards; accessible from menu and optionally in-game.
 - [ ] Connect all UI to game state via signals (GameManager, BackboxManager, StoreManager, LevelManager, PlayerAssets).
+- [ ] Connect Score Range Board to GameManager/PlayerAssets for current score and bracket; connect bracket_reached to notification.
 - [ ] Add animations and sound effects for transitions and feedback (score popup, multiplier pulse, button press).
 
 ---

@@ -146,6 +146,7 @@ stateDiagram-v2
 | BonusActivated(bonus) | bonus_history.append(bonus); if googleWord/dashNest start 5s bonus ball timer |
 | RoundLost | total_score += round_score * multiplier; round_score = 0; multiplier = 1; rounds -= 1; if rounds == 0 then gameOver else spawn ball |
 | GameOver | transition to Leaderboard |
+| BracketReached(bracket) | show notification; queue reward for post-game (Score Range Board, FR-6.3) |
 
 ---
 
@@ -175,7 +176,7 @@ stateDiagram-v2
 
 ## 8. Level Mode Flow
 
-- **LevelSelect**: User picks a level (from world map or list); optional CharacterSelect then HowToPlay; then **LevelPlaying**.
+- **LevelSelect**: User picks a level (from world map or list); optional CharacterSelect then HowToPlay; then **LevelPlaying**. LevelSelect may show CharacterSelect before LevelPlaying, or skip to LevelPlaying; the chosen flow is documented in UI-Design.
 - **LevelPlaying**: Same physics and core mechanics as Classic; level-specific layout and objectives (e.g. target score, tasks, time limit).
 - **LevelComplete**: Rewards (coins, unlocks) applied to **player assets**; then LevelSelect or Splash.
 - Level progress and high scores per level are saved locally.

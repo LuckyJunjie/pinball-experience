@@ -55,7 +55,7 @@ Replicates the Flutter I/O Pinball game in Godot 4.x and extends it with **Store
 | Zones (AndroidAcres, etc.) | Child nodes of Playfield with zone scripts and scoring/bonus logic |
 | — | **StoreManager** – Store UI state, purchase flow; reads/writes PlayerAssets |
 | — | **LevelManager** – LevelSelect, level data, objectives; level progress in PlayerAssets |
-| — | **PlayerAssets / SaveManager** – coins, upgrades, level progress; persist and load for both Classic and Level |
+| — | **PlayerAssets / SaveManager** – coins, upgrades, level progress; **single writer** for persistence; Store and Level only read/write via it |
 
 ---
 
@@ -73,7 +73,7 @@ Main (Node2D)
 ├── Playfield (Node2D)                 # Board background, boundaries
 │   ├── Boundaries (StaticBody2D)     # Walls, outer/bottom boundaries
 │   │
-│   ├── Backbox (CanvasLayer / Node2D) # Above board; marquee + display states
+│   ├── Backbox (CanvasLayer / Node2D) # Above board; marquee + display states. Can be CanvasLayer above playfield or child of Playfield in UI space; position per UI-Design.
 │   │   └── Display                   # Swapped per state: Leaderboard, Initials, GameOver, Share, Loading
 │   │
 │   ├── GoogleGallery (Node2D)
@@ -179,13 +179,15 @@ Main (Node2D)
 
 ### 2.3 Backbox
 
-- **Backbox** node: Holds current display (Leaderboard, InitialsForm, GameOverInfo, Share, Loading, Failure). Switch display via BackboxManager state; position above playfield (e.g. y = -87 in world or in UI space).
+- **Backbox** node: Holds current display (Leaderboard, InitialsForm, GameOverInfo, Share, Loading, Failure). Switch display via BackboxManager state; position above playfield (e.g. y = -87 in world or in UI space). Backbox can be a CanvasLayer above playfield or a child of Playfield in UI space; position per [UI-Design](details/UI-Design.md).
 
 ---
 
 ## 3. Script Architecture
 
 ### 3.1 GameManager (GameBloc equivalent)
+
+**Implements:** FR-1.2.x, FR-1.5.x, TR-3.3, TR-3.4
 
 **Script**: e.g. `scripts/GameManager.gd`
 
@@ -233,6 +235,7 @@ Scoring: Zone → GameManager.add_score() → scored signal → UI. Round lost: 
 | leaderboard_loaded | — | BackboxManager | Backbox |
 | initials_submitted | — | BackboxManager | Backbox |
 | share_requested | — | BackboxManager | Share flow |
+| bracket_reached | score_bracket: String | GameManager / ScoreRangeBoardManager | Score Range Board notification (FR-6.3) |
 
 ---
 
@@ -241,6 +244,10 @@ Scoring: Zone → GameManager.add_score() → scored signal → UI. Round lost: 
 **Scripts**: GameManager.gd, StartFlowManager.gd (or AppStateManager), BackboxManager.gd, CameraBehavior.gd; **StoreManager.gd**, **LevelManager.gd**, **PlayerAssets.gd** (or SaveManager for coins/upgrades/level progress); zone scripts (AndroidAcres, DinoDesert, GoogleGallery, FlutterForest, SparkyScorch, SkillShot, Drain, Launcher); **ScoreRangeBoardManager.gd** (optional).
 
 **Scenes**: Main.tscn (Classic playfield), MainMenu.tscn (Splash: Play / Levels / Store), **Store.tscn**, **LevelSelect.tscn**, **LevelPlay.tscn** (or Main with level data), Backbox.tscn; CharacterSelect, HowToPlay.
+
+**Level data**: Level layouts and objectives live in `resources/levels/` (e.g. JSON or Godot `.tres` resources). Format defined per FR-7.8.
+
+**PlayerAssets**: PlayerAssets (or SaveManager) is the **only writer** for coins, upgrades, level progress; Store and Level only read/write via it. Single save file: e.g. `user://player_assets.json`.
 
 ---
 

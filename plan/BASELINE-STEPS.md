@@ -25,7 +25,7 @@ Phase 0 is built **incrementally**: each step adds (or changes) **one thing** an
 **Goal:** Add drain so the ball is removed when it hits the drain; when no balls remain, trigger “round lost” (no rounds count yet — just one ball per “session” or single round).
 
 - **Drain:** Area or body at bottom; on ball contact → remove ball.
-- **Round-lost logic:** When last ball is removed → emit round_lost (or equivalent); can show a simple “round over” or restart ball at launcher for now.
+- **Round-lost logic:** When no balls remain (ball count in Balls container = 0, or equivalent) → emit round_lost (or equivalent); can show a simple “round over” or restart ball at launcher for now.
 - **Deliverable:** Ball drains → removed; no balls left → round-lost event; game stays playable (e.g. respawn one ball for next “round” or simple restart).
 - **Test:** Ball enters drain → ball count becomes 0; round_lost (or game_over) fires.
 
@@ -45,7 +45,7 @@ Phase 0 is built **incrementally**: each step adds (or changes) **one thing** an
 
 **Goal:** Add one or a few obstacles (bumpers or targets) that give points on hit; show score in UI. Use a **generic, reusable scoring component** so Phase 2 can reuse it inside zone nodes (e.g. AndroidBumperA) or replace instances without refactoring scoring logic.
 
-- **Obstacles:** One or more bumpers/targets using a **single scene or script** with **configurable points** (e.g. 5k, 20k). Each instance calls GameManager.add_score(points) on ball contact. No zone containers yet — flat under Playfield.
+- **Obstacles:** One or more bumpers/targets using a **single scene or script** with **configurable points** (e.g. 5k, 20k). Use `export var points` in the scoring component so each instance can set 5000, 20000, etc. Each instance calls GameManager.add_score(points) on ball contact. No zone containers yet — flat under Playfield.
 - **Scoring:** GameManager holds **roundScore** (and optionally totalScore from the start); obstacles call add_score(points) → roundScore += points when status == playing; UI shows score. This matches target state shape and avoids a later split of "score" into roundScore/totalScore.
 - **Deliverable:** Hitting an obstacle increases roundScore; score visible; game still playable with drain and flippers.
 - **Test:** Hit obstacle N times → roundScore equals N × points per hit.
@@ -88,9 +88,9 @@ Phase 0 is built **incrementally**: each step adds (or changes) **one thing** an
 
 ## Step 0.8 – Multiball
 
-**Goal:** A way to get multiple balls in play (e.g. trigger a target); when all balls drain. Parameterize spawn position so Phase 2 can use DinoWalls., round ends; multiball indicators optional.
+**Goal:** A way to get multiple balls in play (e.g. trigger a target); when all balls drain, round ends. Parameterize spawn position so Phase 2 can use DinoWalls. Multiball indicators optional.
 
-- **Trigger:** e.g. hit a specific target X times or a “multiball” target → spawn extra ball(s). Spawn API: accept position (default launcher) and optional impulse; Phase 2 will pass DinoWalls position and impulse for bonus ball.
+- **Trigger:** e.g. hit a specific target X times or a “multiball” target → spawn extra ball(s). **Spawn API:** `spawn_bonus_ball(position: Vector2, impulse: Vector2 = Vector2.ZERO)`; default position = launcher; Phase 2 passes DinoWalls position and impulse for bonus ball.
 - **Logic:** Multiple balls in play; round_lost only when all balls have drained.
 - **Deliverable:** Can trigger multiball; multiple balls in play; round ends when all drain.
 - **Test:** Trigger multiball → ball count > 1; drain all → round_lost once.
@@ -99,7 +99,7 @@ Phase 0 is built **incrementally**: each step adds (or changes) **one thing** an
 
 ## Step 0.9 – Combo (optional; not in target)
 
-**Goal:** Consecutive hits within a time window increase combo; combo affects score or multiplier; UI shows combo. Combo is **not** in target requirements or GDD; implement for v3.0 parity. Phase 2 does not show or use combo in I/O mode (no code removal).
+**Goal:** Consecutive hits within a time window increase combo; combo affects score or multiplier; UI shows combo. Combo is **not** in target requirements or GDD; implement for v3.0 parity. Phase 2 does not show or use combo in I/O mode — hide combo from HUD in Classic I/O mode (e.g. visibility flag), do not remove combo code.
 
 - **Combo:** Timer (e.g. 2 s); each hit resets timer; combo count increases; after timeout, combo resets. Option: score = base × (1 + combo) or similar.
 - **UI:** Show combo count (e.g. “3x combo”).
@@ -121,18 +121,18 @@ Phase 0 is built **incrementally**: each step adds (or changes) **one thing** an
 
 ## Summary table
 
-| Step | Focus | Playable after | Test idea |
-|------|--------|----------------|-----------|
-| 0.1 | Launcher + flippers | Yes | Ball launches, bounces |
-| 0.2 | Drain | Yes | Ball removed, round_lost |
-| 0.3 | Walls | Yes | Ball confined |
-| 0.4 | Obstacles + score | Yes | Hit → score |
-| 0.5 | Rounds + game over | Yes | 3 drains → game over |
-| 0.6 | Skill shot | Yes | Hit in window → bonus |
-| 0.7 | Multiplier | Yes | Multiplier up/down, applied |
-| 0.8 | Multiball | Yes | Multiball trigger, all drain |
-| 0.9 | Combo | Yes | Combo build/reset |
-| 0.10 | Polish | Yes | Physics, audio, animation |
+| Step | Focus | Depends on | Playable after | Test idea |
+|------|--------|------------|----------------|-----------|
+| 0.1 | Launcher + flippers | — | Yes | Ball launches, bounces |
+| 0.2 | Drain | 0.1 | Yes | Ball removed, round_lost |
+| 0.3 | Walls | 0.1 | Yes | Ball confined |
+| 0.4 | Obstacles + score | 0.1 | Yes | Hit → score |
+| 0.5 | Rounds + game over | 0.2, 0.4 | Yes | 3 drains → game over |
+| 0.6 | Skill shot | 0.5 | Yes | Hit in window → bonus |
+| 0.7 | Multiplier | 0.5 | Yes | Multiplier up/down, applied |
+| 0.8 | Multiball | 0.5 | Yes | Multiball trigger, all drain |
+| 0.9 | Combo | 0.5 | Yes | Combo build/reset |
+| 0.10 | Polish | 0.1–0.9 | Yes | Physics, audio, animation |
 
 **Next:** Phase 1 adds tests for this baseline; Phase 2 ([FEATURE-STEPS.md](FEATURE-STEPS.md)) evolves to full requirements one item at a time.
 
@@ -145,5 +145,5 @@ Phase 0 is built **incrementally**: each step adds (or changes) **one thing** an
 - **0.6:** Skill shot awards **1M** from the start; same node can be repositioned in Phase 2.
 - **0.7:** Use a **single pluggable** multiplier trigger (one target calling increase_multiplier() every 5 hits). Phase 2 replaces that source with SpaceshipRamp.
 - **0.8:** **Parameterize** bonus-ball spawn (position + optional impulse). Phase 2 passes DinoWalls position and impulse for googleWord/dashNest.
-- **0.9:** **Combo** is not in target/GDD. Implement for v3.0 parity; Phase 2 does not show or use combo in I/O (no code removal).
+- **0.9:** **Combo** is not in target/GDD. Implement for v3.0 parity; Phase 2 does not show or use combo in I/O — hide combo from HUD in Classic I/O mode (e.g. visibility flag), do not remove combo code.
 - **Scene:** Keep playfield **flat** in baseline; Phase 2 adds zone containers and I/O components; generic obstacles are replaced or moved, not refactored in place.

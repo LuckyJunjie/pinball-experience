@@ -80,6 +80,24 @@ flowchart TB
 
 ---
 
+## 0.1 Definitions
+
+| Term | Definition |
+|------|------------|
+| **round** | One ball life; starts when ball spawns at launcher, ends when ball drains. |
+| **bonus** | A named achievement (e.g. googleWord, dashNest) recorded in bonusHistory. |
+| **bonus ball** | Extra ball spawned after 5 s when googleWord or dashNest bonus triggers. |
+| **player assets** | Coins, purchased upgrades, unlocks, level progress; persisted and shared across Classic and Level modes. |
+| **bracket** | Score range (e.g. 0–100k, 100k–500k) used by Score Range Board for rewards. |
+| **status** | Session state: waiting \| playing \| gameOver. |
+| **drain** | Area at bottom of playfield; ball contact removes ball and may trigger round lost. |
+| **launcher** | Position where ball spawns at round start; includes plunger for user launch. |
+| **multiball indicator** | One of four lights that animate when a bonus ball is earned. |
+
+See [plan/GLOSSARY.md](../plan/GLOSSARY.md) for full glossary.
+
+---
+
 ## 1. State Machine and Transitions
 
 ### 1.1 App States
@@ -145,7 +163,7 @@ flowchart TB
 }
 ```
 
-- **FR-1.2.2**: Display score = roundScore + totalScore; max 9999999999.
+- **FR-1.2.2**: Display score = roundScore + totalScore; capped at 9999999999. The `scored` signal and display_score shall use this cap.
 - **FR-1.2.3**: On round lost: totalScore += roundScore * multiplier (capped); roundScore = 0; multiplier = 1; rounds -= 1; if rounds == 0 then status = gameOver.
 - **FR-1.2.4**: Scoring shall apply only when status == playing; roundScore shall increase by points from hits.
 
@@ -154,7 +172,7 @@ flowchart TB
 - **FR-1.3.1**: Game shall have 3 rounds (or level-specific); when all balls of a round are lost, the round ends and the next round starts (new ball at launcher) until rounds reach 0.
 - **FR-1.3.2**: When the last ball of a round drains, the game shall emit RoundLost logic (update totalScore, roundScore, multiplier, rounds, status).
 - **FR-1.3.3**: A new ball shall spawn at the launcher (plunger position) when a round starts (game start or after round lost) while status is playing.
-- **FR-1.3.4**: Bonus ball shall spawn after 5 seconds from a defined position (DinoWalls area) with an impulse toward the center when triggered by Google Word or Dash Nest bonus.
+- **FR-1.3.4**: Bonus ball shall spawn after 5 seconds from a defined position (DinoWalls area) with an impulse toward the center when triggered by Google Word or Dash Nest bonus. Bonus ball spawn uses **one** shared 5 s timer; if a second bonus (e.g. both googleWord and dashNest) triggers before spawn, extend or reset the timer per design — only one bonus ball spawns per trigger cycle.
 
 ### 2.4 Scoring and Points
 
@@ -193,6 +211,16 @@ Point values and **trigger → points** mapping (for unambiguous assignment):
 - **FR-1.6.3**: Dash Nest bonus: when all Dash bumpers are lit, award bonus and trigger bonus ball (after 5s).
 - **FR-1.6.4**: Sparky Turbo Charge, Dino Chomp, Android Spaceship: award bonus when ball enters the corresponding target.
 - **FR-1.6.5**: Bonus history shall be recorded and shown (e.g. backbox or HUD) and used for multiball indicator logic.
+
+**Bonus table** (trigger → effect):
+
+| Bonus ID | Trigger | Effect |
+|----------|---------|--------|
+| googleWord | All Google letters lit | Bonus recorded; bonus ball spawn after 5 s |
+| dashNest | All Dash bumpers lit | Bonus recorded; bonus ball spawn after 5 s |
+| sparkyTurboCharge | Ball enters Sparky computer target | Bonus recorded; 200k points |
+| dinoChomp | Ball enters Chrome Dino mouth | Bonus recorded; 200k points |
+| androidSpaceship | Ball enters Android spaceship target | Bonus recorded; 200k points |
 
 ### 2.7 Playfield Zones and Components
 
@@ -235,7 +263,7 @@ Point values and **trigger → points** mapping (for unambiguous assignment):
 
 ## 3. Non-Functional Requirements
 
-- **NFR-2.1**: Game shall run at target frame rate (e.g. 60 FPS) on supported platforms.
+- **NFR-2.1**: Game shall run at **60 FPS** (target frame rate) on supported platforms.
 - **NFR-2.2**: Input latency for flippers and plunger shall be minimal (responsive).
 - **NFR-2.3**: Game shall be playable on desktop (keyboard) and mobile (touch) per input mapping table.
 - **NFR-2.4**: No dependency on Firebase; leaderboard and share shall work with local storage or optional backend.
@@ -249,7 +277,7 @@ Point values and **trigger → points** mapping (for unambiguous assignment):
 
 | Material / Body | Gravity (world) | Restitution (bounce) | Friction | Notes |
 |-----------------|-----------------|----------------------|----------|--------|
-| Ball | 30 units/s² (or project default) | 0.8 | 0.3 | CircleShape2D; mass 0.5 |
+| Ball | 30 units/s² (Flutter ref) or 980 (Godot default) | 0.8 | 0.3 | CircleShape2D; mass 0.5. See [Physics-Specifications](../design/details/Physics-Specifications.md) for Godot coordinate system. |
 | Flipper | 0 (kinematic) | 0.6 | 0.5 | RigidBody2D or kinematic |
 | Bumper | — | 0.95 | 0.2 | StaticBody2D or Area2D |
 | Wall / boundary | — | 0.7 | 0.3 | StaticBody2D |
@@ -321,6 +349,7 @@ Level mode uses the **same physics and core mechanics** as Classic mode and the 
 - **FR-7.5**: Completing a level rewards coins and may unlock new levels or upgrades; rewards are applied to the same player assets used in the Store and Classic mode.
 - **FR-7.6**: Level progress and high scores per level shall be saved locally.
 - **FR-7.7**: Level mode shall use the same physics (TR-3.2) and core mechanics as Classic mode, with level-specific scoring rules or bonus objectives where defined.
+- **FR-7.8**: Level data format (e.g. JSON schema or Godot resource) is defined in [Technical Design](../design/Technical-Design.md).
 
 ---
 

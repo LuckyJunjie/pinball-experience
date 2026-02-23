@@ -64,7 +64,7 @@ We do **not** copy the legacy repo into this project. We implement (or selective
 - How to Play screen.
 - Backbox (leaderboard, initials, share).
 - Exact I/O scoring (5k, 20k, 200k, 1M) and five named bonuses; bonus ball 5s spawn.
-- Shop, currency, battle pass (excluded by current requirements).
+- **Store** and **currency** (in scope for Phase 2; see FEATURE-STEPS 2.31–2.37). Battle pass is out of scope.
 
 ### 5. Playfield layout for baseline
 
@@ -76,6 +76,7 @@ We do **not** copy the legacy repo into this project. We implement (or selective
 
 Phase 0 is done when:
 
+- All steps in [BASELINE-STEPS.md](BASELINE-STEPS.md) (0.1–0.10) are complete and playable in order.
 - The game runs in Godot (launch → play → drain → round lost → game over or replay).
 - Core + skill shot + multiplier + multiball + combo (+ polish) behave and are visible/audible.
 - One main scene and one set of scripts (no version branches in this repo).

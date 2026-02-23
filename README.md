@@ -11,6 +11,9 @@ A pinball game project (Godot 4.x), inspired by Flutter I/O Pinball.
 | 1_02 | [plan/ITERATION-PLAN.md](plan/ITERATION-PLAN.md) |
 | 1_03 | [plan/BASELINE-V3-SCOPE.md](plan/BASELINE-V3-SCOPE.md) |
 | 1_04 | [plan/FEATURE-STEPS.md](plan/FEATURE-STEPS.md) |
+| 1_05 | [plan/reviews/REVIEW-AND-OPTIMIZATIONS.md](plan/reviews/REVIEW-AND-OPTIMIZATIONS.md) |
+| 1_06 | [plan/reviews/COMPREHENSIVE-DOCUMENT-REVIEW.md](plan/reviews/COMPREHENSIVE-DOCUMENT-REVIEW.md) |
+| 1_07 | [plan/GLOSSARY.md](plan/GLOSSARY.md) |
 | **2 – Requirements** | |
 | 2_01 | [requirements/Requirements.md](requirements/Requirements.md) |
 | **3 – Design** | |
