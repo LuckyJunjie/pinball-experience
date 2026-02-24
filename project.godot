@@ -13,7 +13,7 @@ config_version=5
 config/name="Pinball Experience"
 config/description="Pinball game inspired by Flutter I/O Pinball"
 run/main_scene="res://scenes/Main.tscn"
-config/features=PackedStringArray("4.5", "Forward Plus")
+config/features=PackedStringArray("4.5", "GL Compatibility")
 
 [autoload]
 
