@@ -37,6 +37,11 @@ position = Vector2(10, 300)
 collision_layer = 4
 collision_mask = 0
 
+[node name="Sprite2D" type="Sprite2D" parent="Playfield/Boundaries/WallLeft"]
+modulate = Color(0.5, 0.5, 0.5, 1)
+position = Vector2(0, 0)
+scale = Vector2(0.5, 15.5)
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Playfield/Boundaries/WallLeft"]
 shape = SubResource("WallLeft")
 
@@ -45,6 +50,11 @@ position = Vector2(790, 300)
 collision_layer = 4
 collision_mask = 0
 
+[node name="Sprite2D" type="Sprite2D" parent="Playfield/Boundaries/WallRight"]
+modulate = Color(0.5, 0.5, 0.5, 1)
+position = Vector2(0, 0)
+scale = Vector2(0.5, 15.5)
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Playfield/Boundaries/WallRight"]
 shape = SubResource("WallRight")
 
@@ -52,6 +62,11 @@ shape = SubResource("WallRight")
 position = Vector2(400, 10)
 collision_layer = 4
 collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Playfield/Boundaries/WallTop"]
+modulate = Color(0.5, 0.5, 0.5, 1)
+position = Vector2(0, 0)
+scale = Vector2(20.5, 0.5)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Playfield/Boundaries/WallTop"]
 shape = SubResource("WallTop")

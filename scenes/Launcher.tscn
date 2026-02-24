@@ -12,3 +12,4 @@ position = Vector2(0, 0)
 
 [node name="PlungerVisual" type="Sprite2D" parent="."]
 texture = ExtResource("2_tex")
+scale = Vector2(0.15, 0.5)
