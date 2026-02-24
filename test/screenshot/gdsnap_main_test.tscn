@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://screenshot_test"]
+
+[ext_resource type="Script" path="res://addons/gdsnap/view/base_screenshot_test.gd" id="1_base"]
+[ext_resource type="PackedScene" path="res://scenes/Main.tscn" id="2_main"]
+
+[node name="ScreenshotTestMain" type="Node2D"]
+script = ExtResource("1_base")
+test_name = "main_scene"
+update_base_shot = true
+
+[node name="Main" parent="." instance=ExtResource("2_main")]
