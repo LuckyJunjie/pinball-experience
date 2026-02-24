@@ -1,6 +1,6 @@
 # Pinball-Experience 开发状态
 
-**最后更新:** 2026-02-24 07:02
+**最后更新:** 2026-02-24 17:04
 **项目:** pinball-experience
 **版本:** 0.1-0.5 (Baseline)
 
@@ -10,10 +10,10 @@
 
 | 指标 | 状态 |
 |------|------|
-| 代码提交 | ✅ 7e278dd |
-| 最近提交 | "cursor implement the 0.1-0.5" |
-| 待办任务 | ❌ 未创建 pending_tasks.md |
-| 开发状态文档 | ❌ 未创建 |
+| 代码提交 | ✅ 8ae27ab |
+| 本地未推送 | 1 commit |
+| 未提交修改 | 2 文件 (development_status.md, pending_tasks.md) |
+| 待办任务 | ✅ 已创建 pending_tasks.md |
 
 ---
 
@@ -33,65 +33,101 @@
 
 ### P0 阻塞问题
 
-| ID | 问题 | 严重程度 | 状态 |
-|----|------|----------|------|
-| P0-01 | 无 pending_tasks.md 任务追踪文件 | P0 | ✅ 已解决 |
-| P0-02 | 无 development_status.md 状态文档 | P0 | ✅ 已解决 |
-| **P0-03** | **Godot 未安装在树莓派上** | **P0** | 🔴 阻塞 |
-| **P0-04** | **测试脚本未提交** | **P0** | 📋 待处理 |
-| **P0-05** | **缺少音效资源文件** | **P0** | ✅ 已解决 (已存在于 assets/sounds/) |
+| ID | 问题 | 状态 |
+|----|------|------|
+| **P0-06** | **GitHub Action heroiclabs/godot-action 不可用** | 🔴 阻塞 |
+| P0-03 | Godot 未安装在树莓派上 | ⚠️ 环境限制 |
+| P0-04 | 测试脚本已提交 | ✅ 已解决 |
+| P0-05 | 音效资源已存在 | ✅ 已解决 |
 
 ### P1 问题
 
-| ID | 问题 | 严重程度 | 状态 |
-|----|------|----------|------|
-| P1-01 | 未运行测试验证功能 | P1 | 🔴 等待 P0-03 |
-| P1-02 | 测试框架未安装 (GUT/GdUnit4) | P1 | 🔴 等待 P0-03 |
-| P1-03 | 测试脚本未提交到仓库 | P1 | 📋 待提交 |
+| ID | 问题 | 状态 |
+|----|------|------|
+| P1-01 | 未运行测试验证功能 | 🔴 等待 P0-06 |
+| P1-02 | 本地代码未推送 | 🔴 需提交 |
 
 ---
 
-## 📝 研究摘要 [2026-02-24 07:02]
+## 📝 研究摘要 [2026-02-24 17:04]
 
 ### 现状分析
-- **代码状态:** ✅ 已提交 (commit 6945a0a)
-- **最近提交:** "Fix flipper positions and add layout tests"
-- **代码变化:** development_status.md 时间戳更新, 2个未跟踪文件
-- **测试状态:** 
-  - ✅ 单元测试: test/unit/test_ball.gd
-  - ✅ 集成测试: test/integration/test_gameplay.gd (未提交)
-  - ✅ CI配置: .github/workflows/test.yml (已配置 Godot 4.5.1 arm64)
-- **音频资源:** ✅ assets/sounds/ 存在，包含5个音效文件
+- **代码提交:** 本地有 1 个未推送 commit `8ae27ab` (test: Add automated screenshot testing with Xvfb)
+- **代码变化:** 2 个文件本地修改未提交
+- **测试状态:** ⚠️ CI 全部失败 - 无法运行
+- **GitHub Actions:** ❌ 全部失败
 
-### 阻塞问题
-1. ⚠️ **P0-03: Godot 未安装在树莓派上** - 无法本地运行，但可用 GitHub Actions CI 替代
-2. ⚠️ **P0-04: 测试脚本未提交** - check_status.sh 和 test/integration/test_gameplay.gd 未提交
-3. ✅ P0-05 已解决: 音效资源已存在 (assets/sounds/)
-4. ✅ P0-01 已解决: pending_tasks.md 已创建
-5. ✅ P0-02 已解决: development_status.md 已创建
+### 🚨 关键阻塞问题
 
-### 未跟踪文件 (需提交)
-- `check_status.sh` - 状态检查脚本
-- `test/integration/test_gameplay.gd` - 集成测试 (80行，11个测试用例)
+**P0-06: GitHub Action 不可用**
 
-### 新发现
-- ✅ GitHub Actions CI 已配置完整 (unit tests, screenshot tests, console tests)
-- ✅ 音效资源完整: ball_launch.wav, ball_lost.wav, flipper_click.wav, hold_entry.wav, obstacle_hit.wav
-- ⚠️ 本地无法运行 Godot，但 CI 可替代验证
+详细错误:
+```
+##[error]Unable to resolve action heroiclabs/godot-action, repository not found
+```
 
-### 建议行动
-1. 🔴 **立即:** 提交未跟踪的测试文件 (git add + git push)
-2. ✅ 音效资源已就绪，无需额外操作
-3. ✅ CI 已配置，代码推送后自动运行测试
+**影响的 CI Jobs:**
+- ❌ Run Tests (test)
+- ❌ Screenshot Tests (screenshot-test)
+- ❌ Console Tests (console-test)
+
+### 本地待完成事项
+1. 📋 **未推送 commit**: `8ae27ab test: Add automated screenshot testing with Xvfb`
+2. 📋 **未提交修改**: 2 个文件 (development_status.md, pending_tasks.md)
+
+### 阻塞问题汇总
+1. 🔴 **P0-06: CI Action 不可用** - heroiclabs/godot-action 仓库不存在，需要更换为可用的 Action
+2. ⚠️ P0-03: Godot 未安装在树莓派上 (本地无法验证)
 
 ---
 
-## 🔧 建议的下一步
+## ✅ 建议行动
 
-1. **立即执行:** 在 Godot 中打开项目验证功能正常
-2. **短期:** 安装 GUT 测试框架并运行单元测试
-3. **中期:** 执行测试计划中的所有测试用例
-4. **长期:** 完善测试自动化和 CI/CD
+### 1. 立即: 修复 GitHub Action
+
+更换 `heroiclabs/godot-action@v1` 为手动下载 Godot:
+
+```yaml
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Godot
+        run: |
+          wget -q https://github.com/godotengine/godot/releases/download/4.5.1-stable/Godot_v4.5.1-stable_linux.x86_64.zip
+          unzip -q Godot_v4.5.1-stable_linux.x86_64.zip
+          chmod +x Godot_v4.5.1-stable_linux.x86_64
+      
+      - name: Run Tests
+        run: |
+          ./Godot_v4.5.1-stable_linux.x86_64 --headless --path . --script test/run_tests.gd
+```
+
+注意: 使用 `x86_64` 而非 `arm64` (GitHub runners 是 x86)
+
+### 2. 提交修复并推送
+
+```bash
+cd /home/pi/.openclaw/workspace/pinball-experience
+git add .github/workflows/test.yml development_status.md pending_tasks.md
+git commit -m "fix: Replace unavailable godot-action with manual download"
+git push origin master
+```
+
+### 3. 验证 CI 正常运行
+
+---
+
+## 📋 待办任务 (从 pending_tasks.md)
+
+| 优先级 | 任务 | 状态 |
+|--------|------|------|
+| P0 | 修复 GitHub Action | 🔴 阻塞 CI |
+| P0 | 推送本地 commit | 📋 待处理 |
+| P1 | 运行测试验证 | 🔴 等待 CI |
+| P1 | 确定开发方向 | 🔴 需决策 |
 
 ---
 

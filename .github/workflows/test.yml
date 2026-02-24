@@ -16,14 +16,15 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Setup Godot
-        uses: heroiclabs/godot-action@v1
-        with:
-          godot-version: '4.5.1'
-          architecture: 'arm64'
+        run: |
+          wget -q https://github.com/godotengine/godot/releases/download/4.5.1-stable/Godot_v4.5.1-stable_linux.x86_64.zip
+          unzip -q Godot_v4.5.1-stable_linux.x86_64.zip
+          chmod +x Godot_v4.5.1-stable_linux.x86_64
+          echo "Godot setup complete"
       
       - name: Run Unit Tests
         run: |
-          godot --headless --path . --script test/run_tests.gd 2>&1 | tee test_results.log
+          ./Godot_v4.5.1-stable_linux.x86_64 --headless --path . --script test/run_tests.gd 2>&1 | tee test_results.log
       
       - name: Check Test Results
         run: |
@@ -49,10 +50,11 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Setup Godot
-        uses: heroiclabs/godot-action@v1
-        with:
-          godot-version: '4.5.1'
-          architecture: 'arm64'
+        run: |
+          wget -q https://github.com/godotengine/godot/releases/download/4.5.1-stable/Godot_v4.5.1-stable_linux.x86_64.zip
+          unzip -q Godot_v4.5.1-stable_linux.x86_64.zip
+          chmod +x Godot_v4.5.1-stable_linux.x86_64
+          echo "Godot setup complete"
       
       - name: Run Screenshot Tests
         run: |
@@ -74,14 +76,15 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Setup Godot
-        uses: heroiclabs/godot-action@v1
-        with:
-          godot-version: '4.5.1'
-          architecture: 'arm64'
+        run: |
+          wget -q https://github.com/godotengine/godot/releases/download/4.5.1-stable/Godot_v4.5.1-stable_linux.x86_64.zip
+          unzip -q Godot_v4.5.1-stable_linux.x86_64.zip
+          chmod +x Godot_v4.5.1-stable_linux.x86_64
+          echo "Godot setup complete"
       
       - name: Run Console Tests
         run: |
-          godot --headless --path . --quit-after 3 2>&1 | tee console_output.log
+          ./Godot_v4.5.1-stable_linux.x86_64 --headless --path . --quit-after 3 2>&1 | tee console_output.log
       
       - name: Check for Errors
         run: |
