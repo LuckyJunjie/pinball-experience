@@ -1,0 +1,14 @@
+# Screenshot Test Scene for GDSnap
+extends ScreenshotTest
+
+func _ready():
+	# Load the main scene
+	var main = load("res://scenes/Main.tscn").instantiate()
+	get_parent().add_child(main)
+	
+	# Wait for everything to load
+	await get_tree().process_frame
+	await get_tree().create_timer(1.0).timeout
+	
+	# Test passes automatically
+	print("Screenshot test scene loaded")
