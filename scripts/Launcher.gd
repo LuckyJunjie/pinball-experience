@@ -40,6 +40,6 @@ func _launch_ball() -> void:
 	if _ball == null:
 		return
 	_ball.freeze = false
-	_ball.apply_central_impulse(Vector2(-300, -400))
+	_ball.apply_central_impulse(Vector2(300, -400))
 	_ball = null
 	_launch_ready = false

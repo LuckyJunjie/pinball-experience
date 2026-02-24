@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/plunger/plunger.png" id="2_tex"]
 
 [node name="Launcher" type="Node2D"]
-position = Vector2(650, 450)
+position = Vector2(100, 450)
 script = ExtResource("1_launcher")
 
 [node name="SpawnPoint" type="Node2D" parent="."]
