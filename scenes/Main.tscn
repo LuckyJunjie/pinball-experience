@@ -19,7 +19,7 @@ size = Vector2(20, 620)
 size = Vector2(820, 20)
 
 [sub_resource type="RectangleShape2D" id="DrainShape"]
-size = Vector2(400, 40)
+size = Vector2(600, 40)
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main")
