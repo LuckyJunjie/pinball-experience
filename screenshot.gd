@@ -16,7 +16,7 @@ func _initialize():
 	await create_timer(2.0).timeout
 	
 	# Get viewport and capture
-	var viewport = get_viewport()
+	var viewport = get_root().get_viewport()
 	print("Viewport size: ", viewport.size)
 	
 	var image = viewport.get_texture().get_image()
