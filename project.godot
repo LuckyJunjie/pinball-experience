@@ -19,6 +19,7 @@ config/features=PackedStringArray("4.5", "GL Compatibility")
 
 GameManager="*res://scripts/GameManager.gd"
 SoundManager="*res://scripts/SoundManager.gd"
+LevelManager="*res://scripts/LevelManager.gd"
 
 [display]
 
