@@ -10,6 +10,7 @@
 - [x] 修复 GitHub Actions CI - 更换不可用的 godot-action
 - [x] 提交未跟踪的测试脚本 (check_status.sh, test/integration/test_gameplay.gd)
 - [x] 推送代码触发 GitHub Actions CI 验证
+- [x] 修复 FlipperRight 位置错误 (400->600)
 
 ---
 
