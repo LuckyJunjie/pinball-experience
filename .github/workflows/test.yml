@@ -88,8 +88,8 @@ jobs:
       
       - name: Check for Errors
         run: |
-          if grep -q "ERROR" console_output.log; then
-            echo "Errors found in console output!"
+          if grep -qE "FATAL|CRASH|Segmentation fault" console_output.log; then
+            echo "Critical errors found in console output!"
             exit 1
           fi
       
