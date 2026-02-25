@@ -89,7 +89,7 @@ position = Vector2(100, 500)
 position = Vector2(200, 550)
 
 [node name="FlipperRight" parent="." instance=ExtResource("6_flipper_r")]
-position = Vector2(400, 550)
+position = Vector2(600, 550)
 
 [node name="Obstacles" type="Node2D" parent="."]
 
