@@ -83,13 +83,13 @@ shape = SubResource("DrainShape")
 [node name="Balls" type="Node2D" parent="."]
 
 [node name="Launcher" parent="." instance=ExtResource("4_launcher")]
-position = Vector2(100, 500)
+position = Vector2(700, 500)
 
 [node name="FlipperLeft" parent="." instance=ExtResource("5_flipper_l")]
-position = Vector2(200, 550)
+position = Vector2(360, 550)
 
 [node name="FlipperRight" parent="." instance=ExtResource("6_flipper_r")]
-position = Vector2(600, 550)
+position = Vector2(440, 550)
 
 [node name="Obstacles" type="Node2D" parent="."]
 
