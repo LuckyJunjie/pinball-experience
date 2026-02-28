@@ -41,5 +41,16 @@ func _launch_ball() -> void:
 		return
 	_ball.freeze = false
 	_ball.apply_central_impulse(Vector2(0, -500))
+	
+	# 激活技能射击
+	_activate_skill_shot()
+	
 	_ball = null
 	_launch_ready = false
+
+func _activate_skill_shot() -> void:
+	# 查找并激活 SkillShot
+	var skill_shot = get_tree().get_first_node_in_group("skill_shot")
+	if skill_shot and skill_shot.has_method("activate"):
+		skill_shot.activate()
+		print("Launcher: SkillShot 已激活")
