@@ -8,8 +8,10 @@ position = Vector2(50, 550)
 script = ExtResource("1_launcher")
 
 [node name="SpawnPoint" type="Node2D" parent="."]
-position = Vector2(0, 0)
+position = Vector2(0, -30)
 
 [node name="PlungerVisual" type="Sprite2D" parent="."]
 texture = ExtResource("2_tex")
-scale = Vector2(0.15, 0.5)
+hframes = 14
+frame = 0
+scale = Vector2(0.5, 0.5)
