@@ -3,8 +3,6 @@ extends SceneTree
 # 自动化截图脚本
 # 用法: godot --headless --window-size 800,600 --path . -s auto_screenshot.gd
 
-var screenshot_manager: Node = null
-
 func _initialize():
 	print("=== Auto Screenshot Starting ===")
 	
@@ -25,7 +23,13 @@ func _initialize():
 	
 	await create_timer(1.0).timeout
 	
-	# 截图: 发射状态 (模拟发射)
+	# 模拟按下发射键
+	print("Simulating launch key press...")
+	simulate_launch()
+	
+	await create_timer(0.5).timeout
+	
+	# 截图: 发射状态
 	print("Capturing: ball_launch")
 	capture_state("ball_launch")
 	
@@ -46,6 +50,15 @@ func _initialize():
 	print("=== All screenshots captured ===")
 	quit()
 
+func simulate_launch():
+	# 找到Launcher节点并调用发射
+	var launcher = root.find_child("Launcher", true, false)
+	if launcher and launcher.has_method("_launch_ball"):
+		# 检查球是否存在
+		if launcher.get("_ball") != null:
+			launcher._launch_ball()
+			print("Ball launched!")
+
 func capture_state(state_name: String):
 	var viewport = get_root().get_viewport()
 	if not viewport:
@@ -54,16 +67,9 @@ func capture_state(state_name: String):
 	
 	var image = viewport.get_texture().get_image()
 	if not image or image.get_width() == 0:
-		# 创建测试图像
 		print("WARNING: Viewport not rendered, creating test image")
 		image = Image.create(800, 600, false, Image.FORMAT_RGBA8)
-		image.fill(Color(0.2, 0.2, 0.8, 1))  # 蓝色背景
-		# 添加文字说明
-		var font = ThemeDB.fallback_font
-		# 简化处理
-		for x in range(100, 300):
-			for y in range(280, 320):
-				image.set_pixel(x, y, Color.WHITE)
+		image.fill(Color(0.1, 0.1, 0.2, 1))  # 深蓝色背景
 	
 	var path = "res://screenshots/" + state_name + ".png"
 	image.save_png(path)
