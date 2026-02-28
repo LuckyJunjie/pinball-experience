@@ -35,6 +35,8 @@ func _spawn_ball() -> void:
 	_launch_ready = true
 	if SoundManager:
 		SoundManager.play_sound("ball_launch")
+	# 截图：球生成
+	_get_screenshot_manager().capture_on_event(4) # BALL_SPAWN
 
 func _launch_ball() -> void:
 	if _ball == null:
@@ -43,3 +45,16 @@ func _launch_ball() -> void:
 	_ball.apply_central_impulse(Vector2(300, -400))
 	_ball = null
 	_launch_ready = false
+	# 截图：球发射
+	_get_screenshot_manager().capture_on_event(2) # BALL_LAUNCH
+
+func _get_screenshot_manager() -> Node:
+	# 尝试获取ScreenshotManager节点
+	var sm = get_tree().get_first_node_in_group("screenshot_manager")
+	if sm:
+		return sm
+	# 尝试从场景中查找
+	var main = get_tree().current_scene
+	if main and main.has_node("ScreenshotManager"):
+		return main.get_node("ScreenshotManager")
+	return null
