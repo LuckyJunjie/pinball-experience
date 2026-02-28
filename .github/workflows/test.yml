@@ -63,7 +63,9 @@ jobs:
       
       - name: Run Screenshot Tests
         run: |
-          xvfb-run --auto-servernum ./Godot_v4.5.1-stable_linux.x86_64 --headless --path . --script test/auto_screenshot_test.gd 2>&1
+          xvfb-run --auto-servernum --server-args="-screen 0 1024x768x24" \
+            ./Godot_v4.5.1-stable_linux.x86_64 --headless --path . \
+            --script test/automated_screenshot_test.gd 2>&1
       
       - name: Upload Screenshots
         uses: actions/upload-artifact@v4
