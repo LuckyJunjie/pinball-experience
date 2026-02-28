@@ -16,5 +16,5 @@ func _ready() -> void:
 	physics_material.friction = 0.3
 	physics_material_override = physics_material
 	var shape := CircleShape2D.new()
-	shape.radius = 8.0
+	shape.radius = 16.0
 	$CollisionShape2D.shape = shape
