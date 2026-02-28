@@ -1,0 +1,31 @@
+[
+  {
+    "node": "Launcher",
+    "position": "(700.0, 500.0)",
+    "status": "pass"
+  },
+  {
+    "node": "FlipperLeft",
+    "position": "(360.0, 550.0)",
+    "status": "pass"
+  },
+  {
+    "node": "FlipperRight",
+    "position": "(440.0, 550.0)",
+    "status": "pass"
+  },
+  {
+    "node": "Balls",
+    "position": "(0.0, 0.0)",
+    "status": "pass"
+  },
+  {
+    "node": "Playfield/Drain",
+    "position": "(300.0, 580.0)",
+    "status": "pass"
+  },
+  {
+    "reason": "no_image_data",
+    "screenshot": "fail"
+  }
+]
