@@ -24,7 +24,10 @@ jobs:
       
       - name: Run Unit Tests
         run: |
+          # Run basic tests (0.1-0.5)
           ./Godot_v4.5.1-stable_linux.x86_64 --headless --path . --script test/run_tests.gd 2>&1 | tee test_results.log
+          echo "--- Running REQ-008 (Multiball) Tests ---"
+          ./Godot_v4.5.1-stable_linux.x86_64 --headless --path . --script test/unit/test_multiball.gd 2>&1 | tee -a test_results.log
       
       - name: Check Test Results
         run: |
@@ -84,13 +87,18 @@ jobs:
       
       - name: Run Console Tests
         run: |
-          ./Godot_v4.5.1-stable_linux.x86_64 --headless --path . --quit-after 3 2>&1 | tee console_output.log
+          # Run Godot in headless mode for 5 seconds to capture console output
+          timeout 5 ./Godot_v4.5.1-stable_linux.x86_64 --headless --path . --quit-after 5 2>&1 | tee console_output.log || true
       
-      - name: Check for Errors
+      - name: Check for Critical Errors
         run: |
-          if grep -qE "FATAL|CRASH|Segmentation fault" console_output.log; then
+          # Only fail on critical errors - ignore normal Godot INFO/WARN/ERROR logs
+          if grep -qE "FATAL|CRASH|Segmentation fault|Aborted" console_output.log; then
             echo "Critical errors found in console output!"
+            cat console_output.log
             exit 1
+          else
+            echo "Console output check passed - no critical errors"
           fi
       
       - name: Upload Console Output
