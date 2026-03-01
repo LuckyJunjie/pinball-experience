@@ -13,11 +13,11 @@ const SOUND_PATHS := {
 var _players: Dictionary = {}
 
 func _ready() -> void:
-	for name in SOUND_PATHS:
+	for sound_name in SOUND_PATHS:
 		var player := AudioStreamPlayer.new()
 		player.bus = "Master"
 		add_child(player)
-		_players[name] = player
+		_players[sound_name] = player
 
 func play_sound(sound_name: String) -> void:
 	if not SOUND_PATHS.has(sound_name):

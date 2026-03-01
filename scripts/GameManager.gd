@@ -23,11 +23,19 @@ var bonus_history: Array[String] = []
 var balls_container: Node2D
 var launcher: Node2D
 var ball_scene: PackedScene
+var combo_manager: Node = null  # ComboManager reference
 
 const MAX_SCORE := 9999999999
 
 func _ready() -> void:
 	_add_input_actions()
+	# 延迟获取 ComboManager 引用 (确保场景加载完成)
+	call_deferred("_get_combo_manager_ref")
+
+func _get_combo_manager_ref() -> void:
+	combo_manager = get_node_or_null("../ComboManager")
+	if combo_manager == null:
+		combo_manager = get_node_or_null("/root/Main/ComboManager")
 
 func _add_input_actions() -> void:
 	if not InputMap.has_action("flipper_left"):
@@ -45,7 +53,7 @@ func _add_input_actions() -> void:
 
 func _key(keycode: int) -> InputEventKey:
 	var e := InputEventKey.new()
-	e.keycode = keycode
+	e.keycode = keycode as Key
 	return e
 
 func start_game() -> void:
@@ -88,9 +96,17 @@ func on_round_lost() -> void:
 func add_score(points: int, source: String = "") -> void:
 	if status != "playing":
 		return
-	round_score += points
+	
+	# 先增加 Combo (如果在连击中)
+	var combo_multiplier := 1
+	if combo_manager != null and combo_manager.has_method("increase_combo"):
+		combo_manager.increase_combo()
+		combo_multiplier = combo_manager.get_combo_multiplier()
+	
+	var final_points := points * combo_multiplier
+	round_score += final_points
 	round_score = mini(round_score, MAX_SCORE)
-	scored.emit(points, source)
+	scored.emit(final_points, source)
 
 func get_display_score() -> int:
 	return mini(round_score + total_score, MAX_SCORE)

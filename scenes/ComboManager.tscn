@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://combo001"]
+
+[ext_resource type="Script" path="res://scripts/ComboManager.gd" id="1_combo"]
+
+[node name="ComboManager" type="Node" groups=["combo_manager"]]
+script = ExtResource("1_combo")
