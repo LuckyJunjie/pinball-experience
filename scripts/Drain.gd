@@ -9,8 +9,7 @@ func _ready() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("ball"):
 		body.queue_free()
-		if SoundManager:
-			SoundManager.play_sound("ball_lost")
+		SoundManager.play_sound("ball_lost")
 		# 截图：球掉落drain
 		_capture_drain_screenshot()
 		await get_tree().process_frame

@@ -9,6 +9,10 @@ extends Control
 @onready var game_over_score: Label = $GameOverPanel/VBox/ScoreLabel
 @onready var replay_button: Button = $GameOverPanel/VBox/ReplayButton
 
+# Score popup
+var _score_popup_scene: PackedScene = preload("res://scenes/ScorePopup.tscn")
+var _popup_container: Node = null
+
 func _ready() -> void:
 	GameManager.scored.connect(_on_scored)
 	GameManager.round_lost.connect(_on_round_lost)
@@ -30,9 +34,25 @@ func _ready() -> void:
 		combo_manager.combo_increased.connect(_on_combo_increased)
 	if combo_manager and combo_manager.has_signal("combo_reset"):
 		combo_manager.combo_reset.connect(_on_combo_reset)
+	
+	# 创建分数弹窗容器
+	_popup_container = Node2D.new()
+	_popup_container.name = "PopupContainer"
+	add_child(_popup_container)
 
-func _on_scored(_points: int, _source: String) -> void:
+func _on_scored(points: int, source: String) -> void:
 	_update_hud()
+	# Spawn score popup (only for significant scores)
+	if points >= 5000 and _popup_container != null:
+		_spawn_score_popup(points)
+
+func _spawn_score_popup(points: int) -> void:
+	var popup: Label = _score_popup_scene.instantiate()
+	_popup_container.add_child(popup)
+	# Random offset for visual variety
+	var offset := Vector2(randf_range(-30, 30), randf_range(-20, 20))
+	popup.position = get_viewport().get_mouse_position() + offset
+	popup.setup(points, popup.position)
 
 func _on_round_lost(_final_round: int, _mult: int) -> void:
 	_update_hud()

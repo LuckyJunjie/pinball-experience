@@ -28,7 +28,7 @@ func _physics_process(delta: float) -> void:
 	var pressed := Input.is_action_pressed(action)
 	if pressed:
 		_target_angle = pressed_angle
-		if not _was_pressed and SoundManager:
+		if not _was_pressed:
 			SoundManager.play_sound("flipper_click")
 	else:
 		_target_angle = rest_angle
