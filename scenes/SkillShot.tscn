@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [gd_scene load_steps=2 format=3 uid="uid://skillshot01"]
 
 [ext_resource type="Script" path="res://scripts/SkillShot.gd" id="1_ss"]
@@ -10,3 +11,31 @@ points = 1000000
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = RectangleShape2D.new()
 size = Vector2(80, 20)
+=======
+[gd_scene load_steps=5 format=3 uid="uid://skillshot001"]
+
+[ext_resource type="Script" path="res://scripts/SkillShot.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/skill_shot/lit.png" id="2_tex"]
+
+[sub_resource type="CircleShape2D" id="SkillShotShape"]
+radius = 20.0
+
+[sub_resource type="CircleShape2D" id="SkillShotTrigger"]
+radius = 30.0
+
+[node name="SkillShot" type="Area2D" groups=["skill_shot"]]
+position = Vector2(600, 250)
+script = ExtResource("1_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("SkillShotShape")
+
+[node name="TriggerArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea"]
+shape = SubResource("SkillShotTrigger")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_tex")
+scale = Vector2(0.3, 0.3)
+>>>>>>> 705116bfd71db35fc81043d20a98e382b39bc825

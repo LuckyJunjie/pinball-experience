@@ -19,6 +19,10 @@ var rounds: int = 3
 var status: String = "waiting"  # waiting | playing | gameOver
 var bonus_history: Array[String] = []
 
+# Multiplier tracking
+var _ramp_shot_count: int = 0
+const RAMP_SHOTS_FOR_MULTIPLIER := 5
+
 # References (set by Main)
 var balls_container: Node2D
 var launcher: Node2D
@@ -120,3 +124,12 @@ func add_bonus(bonus_type: String) -> void:
 	if bonus_type not in bonus_history:
 		bonus_history.append(bonus_type)
 	bonus_activated.emit(bonus_type)
+
+# Called when player completes a ramp shot - increases multiplier
+func on_ramp_shot() -> void:
+	if status != "playing":
+		return
+	_ramp_shot_count += 1
+	if _ramp_shot_count >= RAMP_SHOTS_FOR_MULTIPLIER:
+		_ramp_shot_count = 0
+		increase_multiplier()

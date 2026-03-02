@@ -1,23 +1,13 @@
-<<<<<<< HEAD
-[gd_scene load_steps=15 format=3 uid="uid://main001"]
-=======
-[gd_scene load_steps=11 format=3 uid="uid://main001"]
->>>>>>> 705116bfd71db35fc81043d20a98e382b39bc825
+[gd_scene load_steps=10 format=3 uid="uid://main001"]
 
-[ext_resource type="Script" uid="uid://betdjec3p3jh0" path="res://scripts/Main.gd" id="1_main"]
-[ext_resource type="Texture2D" uid="uid://dl3ti3kdcnrke" path="res://assets/sprites/board_background.png" id="2_bg"]
-[ext_resource type="Script" uid="uid://b31d1cc3gq1xi" path="res://scripts/Drain.gd" id="2_drain"]
-[ext_resource type="Script" uid="uid://bcoh33sbyapgf" path="res://scripts/UI.gd" id="3_ui"]
+[ext_resource type="Script" path="res://scripts/Main.gd" id="1_main"]
+[ext_resource type="Texture2D" path="res://assets/sprites/board_background.png" id="2_bg"]
+[ext_resource type="Script" path="res://scripts/Drain.gd" id="2_drain"]
+[ext_resource type="Script" path="res://scripts/UI.gd" id="3_ui"]
 [ext_resource type="PackedScene" uid="uid://launcher001" path="res://scenes/Launcher.tscn" id="4_launcher"]
-[ext_resource type="PackedScene" path="res://scenes/FlipperLeft.tscn" id="5_flipper_l"]
-[ext_resource type="PackedScene" path="res://scenes/FlipperRight.tscn" id="6_flipper_r"]
+[ext_resource type="PackedScene" uid="uid://flipper_left" path="res://scenes/FlipperLeft.tscn" id="5_flipper_l"]
+[ext_resource type="PackedScene" uid="uid://flipper_right" path="res://scenes/FlipperRight.tscn" id="6_flipper_r"]
 [ext_resource type="PackedScene" uid="uid://obstacle001" path="res://scenes/Obstacle.tscn" id="7_obstacle"]
-<<<<<<< HEAD
-[ext_resource type="PackedScene" uid="uid://combo001" path="res://scenes/ComboManager.tscn" id="8_combo"]
-[ext_resource type="PackedScene" uid="uid://cu4v1f4hf1iyy" path="res://scenes/ScreenshotManager.tscn" id="9_screenshot"]
-=======
-[ext_resource type="PackedScene" uid="uid://skillshot001" path="res://scenes/SkillShot.tscn" id="8_skillshot"]
->>>>>>> 705116bfd71db35fc81043d20a98e382b39bc825
 
 [sub_resource type="RectangleShape2D" id="WallLeft"]
 size = Vector2(20, 620)
@@ -49,6 +39,7 @@ collision_mask = 0
 
 [node name="Sprite2D" type="Sprite2D" parent="Playfield/Boundaries/WallLeft"]
 modulate = Color(0.5, 0.5, 0.5, 1)
+position = Vector2(0, 0)
 scale = Vector2(0.5, 15.5)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Playfield/Boundaries/WallLeft"]
@@ -61,6 +52,7 @@ collision_mask = 0
 
 [node name="Sprite2D" type="Sprite2D" parent="Playfield/Boundaries/WallRight"]
 modulate = Color(0.5, 0.5, 0.5, 1)
+position = Vector2(0, 0)
 scale = Vector2(0.5, 15.5)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Playfield/Boundaries/WallRight"]
@@ -73,6 +65,7 @@ collision_mask = 0
 
 [node name="Sprite2D" type="Sprite2D" parent="Playfield/Boundaries/WallTop"]
 modulate = Color(0.5, 0.5, 0.5, 1)
+position = Vector2(0, 0)
 scale = Vector2(20.5, 0.5)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Playfield/Boundaries/WallTop"]
@@ -81,6 +74,7 @@ shape = SubResource("WallTop")
 [node name="Drain" type="Area2D" parent="Playfield"]
 position = Vector2(300, 580)
 collision_layer = 0
+collision_mask = 1
 script = ExtResource("2_drain")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Playfield/Drain"]
@@ -89,61 +83,27 @@ shape = SubResource("DrainShape")
 [node name="Balls" type="Node2D" parent="."]
 
 [node name="Launcher" parent="." instance=ExtResource("4_launcher")]
-position = Vector2(700, 500)
+position = Vector2(100, 500)
 
 [node name="FlipperLeft" parent="." instance=ExtResource("5_flipper_l")]
-<<<<<<< HEAD
 position = Vector2(200, 550)
-rotation = 1.5707964
 
 [node name="FlipperRight" parent="." instance=ExtResource("6_flipper_r")]
 position = Vector2(600, 550)
-rotation = -1.5707964
-=======
-position = Vector2(360, 550)
-
-[node name="FlipperRight" parent="." instance=ExtResource("6_flipper_r")]
-position = Vector2(440, 550)
->>>>>>> 705116bfd71db35fc81043d20a98e382b39bc825
 
 [node name="Obstacles" type="Node2D" parent="."]
 
-[node name="Zone_AndroidAcres" type="Node2D" parent="Obstacles"]
-position = Vector2(100, 300)
-
-[node name="Zone_DinoDesert" type="Node2D" parent="Obstacles"]
-position = Vector2(650, 400)
-
-[node name="Zone_FlutterForest" type="Node2D" parent="Obstacles"]
-position = Vector2(600, 150)
-
-[node name="Zone_SparkyScorch" type="Node2D" parent="Obstacles"]
-position = Vector2(100, 150)
-
 [node name="Obstacle1" parent="Obstacles" instance=ExtResource("7_obstacle")]
-<<<<<<< HEAD
 position = Vector2(400, 300)
-=======
-position = Vector2(100, 100)
 points = 5000
->>>>>>> 705116bfd71db35fc81043d20a98e382b39bc825
 
 [node name="Obstacle2" parent="Obstacles" instance=ExtResource("7_obstacle")]
-position = Vector2(100, 200)
+position = Vector2(300, 200)
 points = 20000
 
 [node name="Obstacle3" parent="Obstacles" instance=ExtResource("7_obstacle")]
-position = Vector2(100, 300)
+position = Vector2(500, 200)
 points = 20000
-
-<<<<<<< HEAD
-[node name="ComboManager" parent="." instance=ExtResource("8_combo")]
-
-[node name="ScreenshotManager" parent="." instance=ExtResource("9_screenshot")]
-=======
-[node name="SkillShot" parent="." instance=ExtResource("8_skillshot")]
-position = Vector2(600, 250)
->>>>>>> 705116bfd71db35fc81043d20a98e382b39bc825
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -177,13 +137,6 @@ text = "x1"
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Rounds: 3"
-
-[node name="ComboLabel" type="Label" parent="UI/Control/HUD"]
-visible = false
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.8, 0, 1)
-theme_override_font_sizes/font_size = 28
-text = "COMBO x2!"
 
 [node name="GameOverPanel" type="PanelContainer" parent="UI/Control"]
 visible = false
