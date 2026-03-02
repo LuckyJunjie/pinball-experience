@@ -19,27 +19,15 @@ var rounds: int = 3
 var status: String = "waiting"  # waiting | playing | gameOver
 var bonus_history: Array[String] = []
 
-# Multiplier tracking
-var _ramp_shot_count: int = 0
-const RAMP_SHOTS_FOR_MULTIPLIER := 5
-
 # References (set by Main)
 var balls_container: Node2D
 var launcher: Node2D
 var ball_scene: PackedScene
-var combo_manager: Node = null  # ComboManager reference
 
 const MAX_SCORE := 9999999999
 
 func _ready() -> void:
 	_add_input_actions()
-	# 延迟获取 ComboManager 引用 (确保场景加载完成)
-	call_deferred("_get_combo_manager_ref")
-
-func _get_combo_manager_ref() -> void:
-	combo_manager = get_node_or_null("../ComboManager")
-	if combo_manager == null:
-		combo_manager = get_node_or_null("/root/Main/ComboManager")
 
 func _add_input_actions() -> void:
 	if not InputMap.has_action("flipper_left"):
@@ -57,7 +45,7 @@ func _add_input_actions() -> void:
 
 func _key(keycode: int) -> InputEventKey:
 	var e := InputEventKey.new()
-	e.keycode = keycode as Key
+	e.keycode = keycode
 	return e
 
 func start_game() -> void:
@@ -100,17 +88,9 @@ func on_round_lost() -> void:
 func add_score(points: int, source: String = "") -> void:
 	if status != "playing":
 		return
-	
-	# 先增加 Combo (如果在连击中)
-	var combo_multiplier := 1
-	if combo_manager != null and combo_manager.has_method("increase_combo"):
-		combo_manager.increase_combo()
-		combo_multiplier = combo_manager.get_combo_multiplier()
-	
-	var final_points := points * combo_multiplier
-	round_score += final_points
+	round_score += points
 	round_score = mini(round_score, MAX_SCORE)
-	scored.emit(final_points, source)
+	scored.emit(points, source)
 
 func get_display_score() -> int:
 	return mini(round_score + total_score, MAX_SCORE)
@@ -124,12 +104,3 @@ func add_bonus(bonus_type: String) -> void:
 	if bonus_type not in bonus_history:
 		bonus_history.append(bonus_type)
 	bonus_activated.emit(bonus_type)
-
-# Called when player completes a ramp shot - increases multiplier
-func on_ramp_shot() -> void:
-	if status != "playing":
-		return
-	_ramp_shot_count += 1
-	if _ramp_shot_count >= RAMP_SHOTS_FOR_MULTIPLIER:
-		_ramp_shot_count = 0
-		increase_multiplier()
