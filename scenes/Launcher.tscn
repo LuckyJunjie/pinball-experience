@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://launcher001"]
+[gd_scene load_steps=2 format=3 uid="uid://launcher001"]
 
-[ext_resource type="Script" path="res://scripts/Launcher.gd" id="1_launcher"]
-[ext_resource type="Texture2D" path="res://assets/sprites/plunger/plunger.png" id="2_tex"]
+[ext_resource type="Script" uid="uid://dj0w2sm8hcfi7" path="res://scripts/Launcher.gd" id="1_launcher"]
 
 [node name="Launcher" type="Node2D"]
 position = Vector2(50, 550)
@@ -11,6 +10,4 @@ script = ExtResource("1_launcher")
 position = Vector2(0, -25)
 
 [node name="PlungerVisual" type="Sprite2D" parent="."]
-texture = ExtResource("2_tex")
-hframes = 1
 scale = Vector2(0.15, 0.15)
