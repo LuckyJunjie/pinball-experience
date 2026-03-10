@@ -1,12 +1,12 @@
-[gd_scene load_steps=11 format=3 uid="uid://main001"]
+[gd_scene load_steps=14 format=3 uid="uid://main001"]
 
-[ext_resource type="Script" path="res://scripts/Main.gd" id="1_main"]
-[ext_resource type="Texture2D" path="res://assets/sprites/board_background.png" id="2_bg"]
-[ext_resource type="Script" path="res://scripts/Drain.gd" id="2_drain"]
-[ext_resource type="Script" path="res://scripts/UI.gd" id="3_ui"]
+[ext_resource type="Script" uid="uid://betdjec3p3jh0" path="res://scripts/Main.gd" id="1_main"]
+[ext_resource type="Texture2D" uid="uid://dl3ti3kdcnrke" path="res://assets/sprites/board_background.png" id="2_bg"]
+[ext_resource type="Script" uid="uid://b31d1cc3gq1xi" path="res://scripts/Drain.gd" id="2_drain"]
+[ext_resource type="Script" uid="uid://bcoh33sbyapgf" path="res://scripts/UI.gd" id="3_ui"]
 [ext_resource type="PackedScene" uid="uid://launcher001" path="res://scenes/Launcher.tscn" id="4_launcher"]
-[ext_resource type="PackedScene" uid="uid://flipper_left" path="res://scenes/FlipperLeft.tscn" id="5_flipper_l"]
-[ext_resource type="PackedScene" uid="uid://flipper_right" path="res://scenes/FlipperRight.tscn" id="6_flipper_r"]
+[ext_resource type="PackedScene" path="res://scenes/FlipperLeft.tscn" id="5_flipper_l"]
+[ext_resource type="PackedScene" path="res://scenes/FlipperRight.tscn" id="6_flipper_r"]
 [ext_resource type="PackedScene" uid="uid://obstacle001" path="res://scenes/Obstacle.tscn" id="7_obstacle"]
 [ext_resource type="PackedScene" uid="uid://skillshot001" path="res://scenes/SkillShot.tscn" id="8_skillshot"]
 
@@ -29,6 +29,7 @@ script = ExtResource("1_main")
 
 [node name="Background" type="Sprite2D" parent="Playfield"]
 position = Vector2(400, 300)
+scale = Vector2(0.784, 0.417)
 texture = ExtResource("2_bg")
 
 [node name="Boundaries" type="Node2D" parent="Playfield"]
@@ -36,11 +37,10 @@ texture = ExtResource("2_bg")
 [node name="WallLeft" type="StaticBody2D" parent="Playfield/Boundaries"]
 position = Vector2(10, 300)
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 
 [node name="Sprite2D" type="Sprite2D" parent="Playfield/Boundaries/WallLeft"]
 modulate = Color(0.5, 0.5, 0.5, 1)
-position = Vector2(0, 0)
 scale = Vector2(0.5, 15.5)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Playfield/Boundaries/WallLeft"]
@@ -49,11 +49,10 @@ shape = SubResource("WallLeft")
 [node name="WallRight" type="StaticBody2D" parent="Playfield/Boundaries"]
 position = Vector2(790, 300)
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 
 [node name="Sprite2D" type="Sprite2D" parent="Playfield/Boundaries/WallRight"]
 modulate = Color(0.5, 0.5, 0.5, 1)
-position = Vector2(0, 0)
 scale = Vector2(0.5, 15.5)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Playfield/Boundaries/WallRight"]
@@ -62,11 +61,10 @@ shape = SubResource("WallRight")
 [node name="WallTop" type="StaticBody2D" parent="Playfield/Boundaries"]
 position = Vector2(400, 10)
 collision_layer = 4
-collision_mask = 0
+collision_mask = 1
 
 [node name="Sprite2D" type="Sprite2D" parent="Playfield/Boundaries/WallTop"]
 modulate = Color(0.5, 0.5, 0.5, 1)
-position = Vector2(0, 0)
 scale = Vector2(20.5, 0.5)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Playfield/Boundaries/WallTop"]
@@ -88,9 +86,11 @@ position = Vector2(700, 500)
 
 [node name="FlipperLeft" parent="." instance=ExtResource("5_flipper_l")]
 position = Vector2(360, 550)
+rotation = 1.5707964
 
 [node name="FlipperRight" parent="." instance=ExtResource("6_flipper_r")]
 position = Vector2(440, 550)
+rotation = -1.5707964
 
 [node name="Obstacles" type="Node2D" parent="."]
 
@@ -107,8 +107,7 @@ position = Vector2(600, 150)
 position = Vector2(100, 150)
 
 [node name="Obstacle1" parent="Obstacles" instance=ExtResource("7_obstacle")]
-position = Vector2(100, 100)
-points = 5000
+position = Vector2(143, 117)
 
 [node name="Obstacle2" parent="Obstacles" instance=ExtResource("7_obstacle")]
 position = Vector2(100, 200)
@@ -119,7 +118,6 @@ position = Vector2(100, 300)
 points = 20000
 
 [node name="SkillShot" parent="." instance=ExtResource("8_skillshot")]
-position = Vector2(600, 250)
 
 [node name="UI" type="CanvasLayer" parent="."]
 

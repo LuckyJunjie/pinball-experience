@@ -1,1 +1,4 @@
 res://scenes/Launcher.tscn
+res://scenes/Ball.tscn
+res://scripts/Launcher.gd
+res://scenes/Main.tscn
