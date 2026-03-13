@@ -6,7 +6,7 @@ Evolve the **Phase 0 baseline** to **full requirements** ([../requirements/Requi
 
 ---
 
-**Assumptions about baseline (minimize rework):** Phase 2 assumes the baseline was built with **target-shaped state** and **reusable components** per [BASELINE-V3-SCOPE.md](BASELINE-V3-SCOPE.md) and [BASELINE-STEPS.md](BASELINE-STEPS.md): roundScore, totalScore, multiplier (1–6), rounds (3), status, bonusHistory; generic scoring component for bumpers/targets; single pluggable multiplier trigger; parameterized bonus-ball spawn (position + impulse). Step 2.2 then only aligns caps and signals; zone steps reuse or replace components without refactoring scoring or spawn logic.
+**Assumptions about baseline (minimize rework):** Phase 2 assumes the baseline was built with **target-shaped state** and **reusable components** per [BASELINE-STEPS.md](BASELINE-STEPS.md): roundScore, totalScore, multiplier (1–6), rounds (3), status, bonusHistory; generic scoring component for bumpers/targets; single pluggable multiplier trigger; parameterized bonus-ball spawn (position + impulse). Step 2.2 then only aligns caps and signals; zone steps reuse or replace components without refactoring scoring or spawn logic.
 
 ## Principles
 

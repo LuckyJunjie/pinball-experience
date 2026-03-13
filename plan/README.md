@@ -14,8 +14,6 @@ This folder describes how we iterate from the **legacy project** to the **target
 
 | ID | Document | Description |
 |----|----------|-------------|
-| 1_02 | [ITERATION-PLAN.md](ITERATION-PLAN.md) | Main plan: Phase 0 (baseline), Phase 1 (tests), Phase 2 (feature steps to target). |
-| 1_03 | [BASELINE-V3-SCOPE.md](BASELINE-V3-SCOPE.md) | What “v3.0-equivalent baseline” means; reference to legacy v3.0 design and code. |
 | 1_03b | [BASELINE-STEPS.md](BASELINE-STEPS.md) | Phase 0 **incremental steps**: primitive (launcher + flippers) → drain → walls → obstacles → rounds → skill shot → multiplier → multiball → combo → polish. Each step playable + test. |
 | 1_04 | [FEATURE-STEPS.md](FEATURE-STEPS.md) | Phase 2 **one item per step**: playfield, backbox, **Store** (2.31–2.37), **Score Range Board** (2.38), **Level Mode** (2.39–2.44); playable + test after every step. |
 | **1 – Reviews** | | |

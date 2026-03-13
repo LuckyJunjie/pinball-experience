@@ -8,8 +8,6 @@ A pinball game project (Godot 4.5.1), inspired by Flutter I/O Pinball.
 |----|----------|
 | **1 – Plan** | |
 | 1_01 | [plan/README.md](plan/README.md) |
-| 1_02 | [plan/ITERATION-PLAN.md](plan/ITERATION-PLAN.md) |
-| 1_03 | [plan/BASELINE-V3-SCOPE.md](plan/BASELINE-V3-SCOPE.md) |
 | 1_04 | [plan/FEATURE-STEPS.md](plan/FEATURE-STEPS.md) |
 | 1_05 | [plan/reviews/REVIEW-AND-OPTIMIZATIONS.md](plan/reviews/REVIEW-AND-OPTIMIZATIONS.md) |
 | 1_06 | [plan/reviews/COMPREHENSIVE-DOCUMENT-REVIEW.md](plan/reviews/COMPREHENSIVE-DOCUMENT-REVIEW.md) |
