@@ -81,6 +81,8 @@ func spawn_ball_at_position(position: Vector2, impulse: Vector2 = Vector2.ZERO, 
 	var ball: RigidBody2D = get_ball()
 	if not ball:
 		return null
+	ball.collision_layer = 1
+	ball.collision_mask = 14
 	ball.global_position = position
 	ball.visible = true
 	if ball.has_method("reset_ball"):
@@ -107,6 +109,8 @@ func _create_ball_instance() -> RigidBody2D:
 	var ball: RigidBody2D = _ball_scene.instantiate()
 	_balls_container.add_child(ball)
 	ball.global_position = POOL_STORAGE_POSITION
+	ball.collision_layer = 0
+	ball.collision_mask = 0
 	ball.hide()
 	ball.freeze = true
 	if ball.has_signal("ball_lost"):
@@ -124,6 +128,8 @@ func _reset_ball_state(ball: RigidBody2D) -> void:
 	if ball.get_meta("is_launcher_spawn", false):
 		ball.remove_meta("is_launcher_spawn")
 	ball.global_position = POOL_STORAGE_POSITION
+	ball.collision_layer = 0
+	ball.collision_mask = 0
 	ball.freeze = false
 	ball.linear_velocity = Vector2.ZERO
 	ball.angular_velocity = 0.0

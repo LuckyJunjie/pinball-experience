@@ -1,8 +1,10 @@
 extends Node2D
 ## Launcher - receives ball from GameManager via set_ball(); player presses Space/Down to launch.
 ## Charge: hold to charge, release to launch (like original pin-ball).
+## Communicates with Ball via launch_requested signal (ball connects in set_ball).
 
-signal ball_launched(force: Vector2)
+signal ball_launched(force: Vector2)  ## Emitted after launch (for SkillShot, etc.)
+signal launch_requested(force: Vector2)  ## Emitted to tell ball to launch (ball connects to this)
 
 @onready var spawn_point: Node2D = $SpawnPoint
 @onready var plunger_visual: Sprite2D = $PlungerVisual
@@ -18,6 +20,7 @@ signal ball_launched(force: Vector2)
 const DEBUG_LAUNCH := true  ## Set true to trace spawn position and launch force
 
 var current_ball: RigidBody2D = null
+var _launch_callable: Callable  ## Ball.launch_ball connected to launch_requested
 var current_charge: float = 0.0
 var is_charging: bool = false
 var plunger_rest_position: Vector2 = Vector2(0, 0)
@@ -68,6 +71,7 @@ func get_spawn_position() -> Vector2:
 
 ## Called by GameManager when a new ball is spawned at the launcher.
 func set_ball(ball: RigidBody2D) -> void:
+	_disconnect_launch()
 	current_ball = ball
 	if ball:
 		var pos = get_spawn_position() + spawn_offset
@@ -78,13 +82,17 @@ func set_ball(ball: RigidBody2D) -> void:
 		ball.freeze = true
 		ball.linear_velocity = Vector2.ZERO
 		ball.angular_velocity = 0.0
-		## Remove from physics to prevent residue from Drain/overlap when frozen
-		ball.collision_layer = 0
-		ball.collision_mask = 0
+		## Completely remove ball from physics world - prevents any residual state when unfreezing
+		ball.disable_mode = CollisionObject2D.DISABLE_MODE_REMOVE
+		ball.process_mode = Node.PROCESS_MODE_DISABLED
 		if ball.get("initial_position") != null:
 			ball.initial_position = pos
 		if ball.has_method("reset_ball"):
 			ball.reset_ball()
+		## Ball receives launch via signal - decouples Launcher from Ball
+		if ball.has_method("launch_ball"):
+			_launch_callable = ball.launch_ball
+			launch_requested.connect(_launch_callable)
 		if SoundManager:
 			SoundManager.play_sound("ball_launch")
 
@@ -109,15 +117,23 @@ func launch_ball() -> void:
 		print("[Pinball][Launcher] launch params: base=", base_launch_force, " max=", max_launch_force, " charge=", current_charge, " magnitude=", force_magnitude, " angle_deg=", horizontal_launch_angle)
 		print("[Pinball][Launcher] launch_force=", launch_force, " (x>0=RIGHT, y<0=UP) len=", launch_force.length())
 	ball_to_launch.visible = true
-	if ball_to_launch.has_method("launch_ball"):
-		ball_to_launch.launch_ball(launch_force)
-	else:
+	## Tell ball to launch via signal (ball connected in set_ball)
+	var had_signal_connection := _launch_callable.is_valid() and launch_requested.is_connected(_launch_callable)
+	launch_requested.emit(launch_force)
+	_disconnect_launch()
+	## Fallback if ball doesn't support launch_ball (e.g. generic RigidBody2D)
+	if ball_to_launch.freeze and not had_signal_connection:
 		ball_to_launch.freeze = false
 		ball_to_launch.apply_central_impulse(launch_force)
 	ball_launched.emit(launch_force)
 	current_charge = 0.0
 	is_charging = false
 	_activate_skill_shot()
+
+func _disconnect_launch() -> void:
+	if _launch_callable.is_valid() and launch_requested.is_connected(_launch_callable):
+		launch_requested.disconnect(_launch_callable)
+	_launch_callable = Callable()
 
 func _activate_skill_shot() -> void:
 	var skill_shot = get_tree().get_first_node_in_group("skill_shot")
