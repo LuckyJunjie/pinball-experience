@@ -49,13 +49,11 @@ func _ready() -> void:
 
 func _physics_process(_delta: float) -> void:
 	if freeze:
-		if DEBUG_BALL_TRACE:
-			print("[Pinball][Ball] freeze=true, ball frozen, pos=", global_position)
 		return
 	if DEBUG_BALL_TRACE:
 		_trace_frame_count += 1
-		if _trace_frame_count <= 3 or _trace_frame_count % 12 == 0:
-			print("Ball pos: ", global_position, "  vel: ", linear_velocity)
+		if _trace_frame_count <= 5 or _trace_frame_count % 12 == 0:
+			print("[Pinball][Ball] pos=", global_position, " vel=", linear_velocity, " mass=", mass, " freeze=", freeze)
 	# Keep ball within playfield (safety; drain handles bottom)
 	var clamped_x := clampf(global_position.x, boundary_left, boundary_right)
 	var clamped_y := global_position.y
@@ -95,13 +93,11 @@ func launch_ball(force: Vector2 = Vector2(0, -500)) -> void:
 	visible = true
 	freeze = false
 	sleeping = false
-	# Use linear_velocity directly instead of impulse to avoid physics overlap resolution
-	# overwriting our launch (impulse can be corrupted if ball overlaps something when unfrozen)
 	linear_velocity = force / mass
 	launch_time = Time.get_ticks_msec() / 1000.0
 	_trace_frame_count = 0
 	if DEBUG_BALL_TRACE:
-		print("[Pinball][Ball] launch_ball force=", force, " vel=", linear_velocity, " pos=", global_position)
+		print("[Pinball][Ball] launch_ball force=", force, " vel=", linear_velocity, " pos=", global_position, " (y<0=UP)")
 
 func _exit_tree() -> void:
 	if DEBUG_BALL_TRACE:

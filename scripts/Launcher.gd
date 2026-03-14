@@ -101,14 +101,15 @@ func launch_ball() -> void:
 	var force_magnitude = absf(base_launch_force.y) + absf(force_range.y) * current_charge
 	var angle_rad = deg_to_rad(horizontal_launch_angle)
 	var launch_force = Vector2(-sin(angle_rad), -cos(angle_rad)) * force_magnitude
+	if DEBUG_LAUNCH:
+		print("[Pinball][Launcher] launch params: base=", base_launch_force, " max=", max_launch_force, " charge=", current_charge, " magnitude=", force_magnitude, " angle_deg=", horizontal_launch_angle)
+		print("[Pinball][Launcher] launch_force=", launch_force, " (x>0=RIGHT, y<0=UP) len=", launch_force.length())
 	ball_to_launch.visible = true
 	if ball_to_launch.has_method("launch_ball"):
 		ball_to_launch.launch_ball(launch_force)
 	else:
 		ball_to_launch.freeze = false
 		ball_to_launch.apply_central_impulse(launch_force)
-	if DEBUG_LAUNCH:
-		print("[Pinball][Launcher] launch force: ", launch_force, " charge: ", current_charge, " magnitude: ", launch_force.length())
 	ball_launched.emit(launch_force)
 	current_charge = 0.0
 	is_charging = false
