@@ -82,9 +82,6 @@ func set_ball(ball: RigidBody2D) -> void:
 		ball.freeze = true
 		ball.linear_velocity = Vector2.ZERO
 		ball.angular_velocity = 0.0
-		## Completely remove ball from physics world - prevents any residual state when unfreezing
-		ball.disable_mode = CollisionObject2D.DISABLE_MODE_REMOVE
-		ball.process_mode = Node.PROCESS_MODE_DISABLED
 		if ball.get("initial_position") != null:
 			ball.initial_position = pos
 		if ball.has_method("reset_ball"):
