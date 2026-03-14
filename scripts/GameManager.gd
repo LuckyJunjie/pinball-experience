@@ -215,20 +215,15 @@ func _spawn_ball_at_launcher() -> void:
 		if DEBUG_LOGS:
 			print("[Pinball][GameManager] _spawn_ball_at_launcher skipped: no ball_scene or balls_container")
 		return
-	_ensure_ball_pool_initialized()
-	var ball_pool = BallPoolScript.get_instance()
-	var ball: RigidBody2D = null
-	if ball_pool and ball_pool.is_initialized():
-		ball = ball_pool.spawn_ball_at_position(launcher_spawn_position, Vector2.ZERO, true)
-		if DEBUG_LOGS:
-			print("[Pinball][GameManager] _spawn_ball_at_launcher pos=%s ball_valid=%s rounds=%d" % [launcher_spawn_position, ball != null, rounds])
-	if not ball:
-		ball = ball_scene.instantiate()
-		balls_container.add_child(ball)
-		if ball.has_signal("ball_lost"):
-			ball.ball_lost.connect(_on_ball_lost)
-		if DEBUG_LOGS:
-			print("[Pinball][GameManager] spawn direct instantiate")
+	## Bypass ball pool for launcher spawn - pooled balls retain physics residue (~8000 velocity)
+	## from drain, causing launch to fail. Fresh balls have no residue.
+	var ball: RigidBody2D = ball_scene.instantiate()
+	balls_container.add_child(ball)
+	ball.set_meta("is_launcher_spawn", true)
+	if ball.has_signal("ball_lost"):
+		ball.ball_lost.connect(_on_ball_lost)
+	if DEBUG_LOGS:
+		print("[Pinball][GameManager] _spawn_ball_at_launcher pos=%s ball_valid=%s rounds=%d (fresh)" % [launcher_spawn_position, ball != null, rounds])
 	if ball:
 		ball.freeze = true
 		ball.global_position = launcher_spawn_position

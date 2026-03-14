@@ -1,28 +1,28 @@
 extends RigidBody2D
 ## Ball - physics body for pinball. Spawned at launcher; Launcher/GameManager call set_ball and launch_ball(force).
 ## Handles collision (flipper boost), CCD; emits ball_lost when removed (e.g. by Drain).
-## Launch logic matches original pin-ball: freeze=false, linear_velocity=0, apply_central_impulse(force).
 
 signal ball_lost
 
 const BALL_LAYER := 1
-const DEBUG_BALL_TRACE := true  ## Set true to trace ball pos/vel and removal stack
+const DEBUG_BALL_TRACE := false
 const BALL_MASK := 14  # 2+4+8: flippers, walls, obstacles
 
 @export var initial_position: Vector2 = Vector2(400, 500)
 @export var boundary_left: float = 20.0
 @export var boundary_right: float = 780.0
 @export var boundary_top: float = 20.0
-@export var boundary_bottom: float = 600.0  ## Cap Y to prevent runaway fall; drain handles removal
+@export var boundary_bottom: float = 600.0
 
-const BALL_RADIUS := 16.0
+const BALL_RADIUS := 16.0 / 3.0
 
 var _has_emitted_lost: bool = false
-## Time when ball was launched (seconds since engine start); used by Drain for grace period
 var launch_time: float = -1.0
 var _trace_frame_count: int = 0
+var _pending_launch_velocity: Vector2 = Vector2.ZERO  ## Set in launch_ball, applied in _integrate_forces
 
 func _ready() -> void:
+	freeze = true  # Stay frozen until BallPool positions us
 	if DEBUG_BALL_TRACE:
 		print("[Pinball][Ball] created at ", global_position)
 	z_index = 5
@@ -43,9 +43,16 @@ func _ready() -> void:
 	physics_material.friction = 0.075
 	physics_material_override = physics_material
 	var shape := CircleShape2D.new()
-	shape.radius = 16.0
+	shape.radius = BALL_RADIUS
 	if $CollisionShape2D:
 		$CollisionShape2D.shape = shape
+
+func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
+	## Apply launch velocity during physics step - overrides any physics server residue.
+	if _pending_launch_velocity != Vector2.ZERO:
+		state.linear_velocity = _pending_launch_velocity
+		state.angular_velocity = 0.0
+		_pending_launch_velocity = Vector2.ZERO
 
 func _physics_process(_delta: float) -> void:
 	if freeze:
@@ -54,14 +61,11 @@ func _physics_process(_delta: float) -> void:
 		_trace_frame_count += 1
 		if _trace_frame_count <= 5 or _trace_frame_count % 12 == 0:
 			print("[Pinball][Ball] pos=", global_position, " vel=", linear_velocity, " mass=", mass, " freeze=", freeze)
-	# Keep ball within playfield (safety; drain handles bottom)
+	var top_min := boundary_top + BALL_RADIUS
 	var clamped_x := clampf(global_position.x, boundary_left, boundary_right)
 	var clamped_y := global_position.y
-	# Top: place ball center below wall - avoid overlap (wall y=0..20, ball radius 16)
-	var top_min := boundary_top + BALL_RADIUS
 	if global_position.y < top_min:
 		clamped_y = top_min
-	# Bottom: cap Y to prevent runaway fall; drain handles removal
 	if global_position.y > boundary_bottom:
 		clamped_y = boundary_bottom
 	if global_position.x != clamped_x or global_position.y != clamped_y:
@@ -73,10 +77,11 @@ func _physics_process(_delta: float) -> void:
 		if global_position.y <= top_min:
 			apply_central_impulse(Vector2(0, 50))
 		elif global_position.y >= boundary_bottom:
-			# Zero downward velocity when capping at bottom to prevent runaway
 			linear_velocity.y = minf(linear_velocity.y, 0.0)
 
 func _on_body_entered(body: Node2D) -> void:
+	if DEBUG_BALL_TRACE:
+		print("[Pinball][Ball] _on_body_entered with ", body.name, " (", body.get_class(), ") at pos=", body.global_position)
 	if body.has_method("get_flipper_side"):
 		var side: String = body.get_flipper_side()
 		var strength: float = body.flipper_strength if "flipper_strength" in body else 1500.0
@@ -91,13 +96,24 @@ func reset_ball() -> void:
 
 func launch_ball(force: Vector2 = Vector2(0, -500)) -> void:
 	visible = true
-	freeze = false
-	sleeping = false
-	linear_velocity = force / mass
 	launch_time = Time.get_ticks_msec() / 1000.0
 	_trace_frame_count = 0
 	if DEBUG_BALL_TRACE:
-		print("[Pinball][Ball] launch_ball force=", force, " vel=", linear_velocity, " pos=", global_position, " (y<0=UP)")
+		print("[Pinball][Ball] launch_ball force=", force, " pos=", global_position, " (y<0=UP)")
+	## Defer unfreeze + collision enable by one frame to avoid physics overlap resolution
+	## (unfreezing while overlapping causes huge velocity spikes as engine separates bodies)
+	_pending_launch_velocity = force / mass
+	call_deferred("_enable_physics_for_launch")
+
+func _enable_physics_for_launch() -> void:
+	if not is_instance_valid(self):
+		return
+	linear_velocity = Vector2.ZERO
+	angular_velocity = 0.0
+	collision_layer = BALL_LAYER
+	collision_mask = BALL_MASK
+	freeze = false
+	sleeping = false
 
 func _exit_tree() -> void:
 	if DEBUG_BALL_TRACE:

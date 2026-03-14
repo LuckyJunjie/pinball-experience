@@ -1,7 +1,6 @@
 res://scripts/Ball.gd
-res://scripts/Main.gd
-res://scripts/Launcher.gd
-res://scripts/Drain.gd
 res://scripts/BallPool.gd
+res://scripts/Drain.gd
 res://scripts/GameManager.gd
-res://scripts/MainMenu.gd
+res://scripts/Launcher.gd
+res://scenes/Main.tscn

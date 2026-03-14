@@ -11,7 +11,7 @@ signal ball_launched(force: Vector2)
 @export var max_launch_force: Vector2 = Vector2(0, -800)
 @export var charge_rate: float = 2.0
 @export var max_charge: float = 1.0
-@export var horizontal_launch_angle: float = 15.0  # Positive = launch left toward playfield (launcher on right at x=700)
+@export var horizontal_launch_angle: float = 0.0  # 0 = straight up; positive = launch left toward playfield (launcher on right at x=700)
 ## Small offset to avoid ball overlapping launcher/plunger when spawned (prevents physics push on unfreeze)
 @export var spawn_offset: Vector2 = Vector2(-8, 0)  # Left of spawn point (launcher on right)
 
@@ -77,6 +77,10 @@ func set_ball(ball: RigidBody2D) -> void:
 		ball.global_position = pos
 		ball.freeze = true
 		ball.linear_velocity = Vector2.ZERO
+		ball.angular_velocity = 0.0
+		## Remove from physics to prevent residue from Drain/overlap when frozen
+		ball.collision_layer = 0
+		ball.collision_mask = 0
 		if ball.get("initial_position") != null:
 			ball.initial_position = pos
 		if ball.has_method("reset_ball"):

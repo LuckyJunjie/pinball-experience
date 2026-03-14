@@ -46,11 +46,16 @@ func _on_body_entered(body: Node2D) -> void:
 	if DEBUG_LOGS:
 		print("[Pinball][Drain] removing ball pos=%s" % body.global_position)
 	var gm = get_node_or_null("/root/GameManager")
-	var ball_pool = get_node_or_null("/root/BallPool")
-	if ball_pool and ball_pool.has_method("return_ball") and ball_pool.is_initialized():
-		ball_pool.return_ball(body)
-	else:
+	## Launcher-spawned balls are fresh (never pooled); queue_free to avoid physics residue on reuse.
+	var is_launcher_spawn: bool = body.get_meta("is_launcher_spawn", false) as bool
+	if is_launcher_spawn:
 		body.queue_free()
+	else:
+		var ball_pool = get_node_or_null("/root/BallPool")
+		if ball_pool and ball_pool.has_method("return_ball") and ball_pool.is_initialized():
+			ball_pool.return_ball(body)
+		else:
+			body.queue_free()
 	if SoundManager:
 		SoundManager.play_sound("ball_lost")
 	await get_tree().process_frame

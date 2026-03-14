@@ -7,6 +7,8 @@ signal pool_expanded(new_size: int)
 
 const DEFAULT_POOL_SIZE: int = 5
 const EXPANSION_INCREMENT: int = 3
+## Off-screen position so pool balls never overlap playfield; prevents overlap resolution on unfreeze
+const POOL_STORAGE_POSITION := Vector2(-10000, -10000)
 
 var _available_balls: Array[RigidBody2D] = []
 var _active_balls: Array[RigidBody2D] = []
@@ -49,7 +51,7 @@ func get_ball() -> RigidBody2D:
 	_active_balls.append(ball)
 	ball.show()
 	ball.visible = true
-	ball.freeze = false
+	# Keep frozen - caller sets position before unfreezing to avoid overlap resolution corrupting velocity
 	if DEBUG_LOGS:
 		print("[Pinball][BallPool] get_ball active_count=%d" % _active_balls.size())
 	ball_activated.emit(ball)
@@ -85,9 +87,9 @@ func spawn_ball_at_position(position: Vector2, impulse: Vector2 = Vector2.ZERO, 
 		ball.reset_ball()
 	if ball.get("initial_position") != null:
 		ball.initial_position = position
-	if freeze:
-		ball.freeze = true
+	ball.freeze = freeze
 	if impulse != Vector2.ZERO:
+		ball.freeze = false
 		ball.apply_central_impulse(impulse)
 	if DEBUG_LOGS:
 		print("[Pinball][BallPool] spawn_ball_at_position pos=%s freeze=%s visible=%s" % [position, freeze, ball.visible])
@@ -104,6 +106,7 @@ func _create_ball_instance() -> RigidBody2D:
 		return null
 	var ball: RigidBody2D = _ball_scene.instantiate()
 	_balls_container.add_child(ball)
+	ball.global_position = POOL_STORAGE_POSITION
 	ball.hide()
 	ball.freeze = true
 	if ball.has_signal("ball_lost"):
@@ -118,13 +121,18 @@ func _expand_pool() -> void:
 	pool_expanded.emit(_pool_size)
 
 func _reset_ball_state(ball: RigidBody2D) -> void:
+	if ball.get_meta("is_launcher_spawn", false):
+		ball.remove_meta("is_launcher_spawn")
+	ball.global_position = POOL_STORAGE_POSITION
+	ball.freeze = false
 	ball.linear_velocity = Vector2.ZERO
-	ball.angular_velocity = 0
-	ball.rotation = 0
+	ball.angular_velocity = 0.0
+	ball.rotation = 0.0
 	if ball.has_method("reset_ball"):
 		ball.reset_ball()
 	elif ball.get("_has_emitted_lost") != null:
 		ball._has_emitted_lost = false
+	ball.freeze = true
 
 func _on_ball_lost(ball: RigidBody2D) -> void:
 	## ball_lost is emitted from Ball._exit_tree when ball is queue_free'd.

@@ -62,6 +62,7 @@ launch_ball={
 
 [physics]
 
+common/physics_ticks_per_second=120
 2d/default_gravity_vector=Vector2(0, 980)
 2d/default_linear_damp=0.0
 2d/default_angular_damp=0.1
