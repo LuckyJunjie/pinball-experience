@@ -5,7 +5,7 @@
 ## How to Run
 
 - **Baseline (0.1–0.5):** Main scene is `res://scenes/Main.tscn`. Run the project; game starts immediately.
-- **Target flow:** Main menu (Splash) with Play, Levels, Store → Character Select → How to Play → playfield. After game over: Replay restarts the game.
+- **Target flow:** Main menu (MainMenu.tscn) with Play, Levels, Store → Character Select → How to Play → Main.tscn (playfield). Back / Game Over → MainMenu. See [Technical-Structure](Technical-Structure.md) for scene flow and node contracts.
 
 ---
 
@@ -47,10 +47,12 @@
 | requirements/Requirements.md | Requirements |
 | design/GDD.md | Game Design Document |
 | design/Technical-Design.md | Technical design |
+| design/Technical-Structure.md | Scene tree, script mapping, node contracts, physics layers |
 | design/Game-Flow.md | State and flow |
 | design/details/Component-Specifications.md | Component specs |
 | design/details/Asset-Requirements.md | Asset list |
 | design/Implementation-Summary.md | This file |
+| plan/FEATURE-STEPS.md | Feature steps (Phase 2) |
 
 ---
 

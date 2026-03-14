@@ -39,6 +39,8 @@ Phase 0 is built **incrementally**: each step adds (or changes) **one thing** an
 - **Deliverable:** Ball stays on board except when it enters drain; no escape through sides/top.
 - **Test:** Ball bounces off walls; only way to lose ball is drain (or explicit out-of-bounds if used).
 
+**Implemented:** `Main.tscn` has `Playfield/Boundaries` with WallLeft (x 0–20), WallRight (x 780–800), WallTop (y 0–20); all StaticBody2D, collision_layer=4. `Boundaries.gd` applies bouncy PhysicsMaterial (bounce 0.6) to each wall. Ball collision_mask includes layer 4; Ball soft bounds match wall edges; bottom open for drain.
+
 ---
 
 ## Step 0.4 – Obstacles / bumpers (basic scoring)

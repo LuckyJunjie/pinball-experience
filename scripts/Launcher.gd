@@ -1,17 +1,32 @@
 extends Node2D
-## Launcher - handles ball spawn and launch. Space/Down to launch.
+## Launcher - receives ball from GameManager via set_ball(); player presses Space/Down to launch.
+## Charge: hold to charge, release to launch (like original pin-ball).
+
+signal ball_launched(force: Vector2)
 
 @onready var spawn_point: Node2D = $SpawnPoint
 @onready var plunger_visual: Sprite2D = $PlungerVisual
 
-var _ball: RigidBody2D = null
-var _launch_ready: bool = false
+@export var base_launch_force: Vector2 = Vector2(0, -400)
+@export var max_launch_force: Vector2 = Vector2(0, -800)
+@export var charge_rate: float = 2.0
+@export var max_charge: float = 1.0
+@export var horizontal_launch_angle: float = 15.0  # Positive = launch left toward playfield (launcher on right at x=700)
+## Small offset to avoid ball overlapping launcher/plunger when spawned (prevents physics push on unfreeze)
+@export var spawn_offset: Vector2 = Vector2(-8, 0)  # Left of spawn point (launcher on right)
+
+const DEBUG_LAUNCH := true  ## Set true to trace spawn position and launch force
+
+var current_ball: RigidBody2D = null
+var current_charge: float = 0.0
+var is_charging: bool = false
+var plunger_rest_position: Vector2 = Vector2(0, 0)
+var plunger_max_pull: Vector2 = Vector2(0, 25)
 
 const PLUNGER_SHEET_PATH := "res://assets/sprites/plunger/plunger.png"
 const PLUNGER_FRAME_COUNT := 20
 
 func _ready() -> void:
-	GameManager.ball_spawn_requested.connect(_on_spawn_requested)
 	_setup_plunger_visual()
 
 func _setup_plunger_visual() -> void:
@@ -26,48 +41,83 @@ func _setup_plunger_visual() -> void:
 	atlas.region = Rect2i(0, 0, fw, sheet.get_height())
 	plunger_visual.texture = atlas
 
-func _physics_process(_delta: float) -> void:
-	if _ball != null and _launch_ready and Input.is_action_just_pressed("launch_ball"):
-		_launch_ball()
+func _physics_process(delta: float) -> void:
+	var has_valid_ball = current_ball != null and is_instance_valid(current_ball)
+	var launch_pressed = Input.is_action_pressed("launch_ball")
+	var launch_just_released = Input.is_action_just_released("launch_ball")
+
+	if launch_pressed and has_valid_ball:
+		if not is_charging:
+			is_charging = true
+			current_charge = 0.0
+		current_charge = minf(current_charge + charge_rate * delta, max_charge)
+		_update_plunger_visual()
+	else:
+		if has_valid_ball and (is_charging or launch_just_released):
+			if current_charge <= 0.0:
+				current_charge = 0.2
+			launch_ball()
+		is_charging = false
+		current_charge = 0.0
+		_update_plunger_visual()
 
 func get_spawn_position() -> Vector2:
 	if spawn_point:
 		return spawn_point.global_position
 	return global_position
 
-func _on_spawn_requested() -> void:
-	_spawn_ball()
+## Called by GameManager when a new ball is spawned at the launcher.
+func set_ball(ball: RigidBody2D) -> void:
+	current_ball = ball
+	if ball:
+		var pos = get_spawn_position() + spawn_offset
+		if DEBUG_LAUNCH:
+			print("Spawn point: ", pos, " (offset: ", spawn_offset, ")")
+		ball.visible = true
+		ball.global_position = pos
+		ball.freeze = true
+		ball.linear_velocity = Vector2.ZERO
+		if ball.get("initial_position") != null:
+			ball.initial_position = pos
+		if ball.has_method("reset_ball"):
+			ball.reset_ball()
+		if SoundManager:
+			SoundManager.play_sound("ball_launch")
 
-func _spawn_ball() -> void:
-	if GameManager.ball_scene == null or GameManager.balls_container == null:
-		return
-	var ball := GameManager.ball_scene.instantiate() as RigidBody2D
-	ball.global_position = get_spawn_position()
-	ball.linear_velocity = Vector2.ZERO
-	ball.angular_velocity = 0
-	ball.freeze = true
-	GameManager.balls_container.add_child(ball)
-	_ball = ball
-	_launch_ready = true
-	if SoundManager:
-		SoundManager.play_sound("ball_launch")
+func _update_plunger_visual() -> void:
+	if plunger_visual and is_charging:
+		var pull = plunger_max_pull * current_charge
+		plunger_visual.position = plunger_rest_position + pull
+	elif plunger_visual:
+		plunger_visual.position = plunger_rest_position
 
-func _launch_ball() -> void:
-	if _ball == null:
+func launch_ball() -> void:
+	if not current_ball or not is_instance_valid(current_ball):
 		return
-	_ball.freeze = false
-	# Impulse tuned so ball stays on playfield (~200px peak); mass 0.5, g=980
-	_ball.apply_central_impulse(Vector2(0, -320))
-	
-	# 激活技能射击
+	var ball_to_launch = current_ball
+	current_ball = null
+	# Use sin/cos: positive angle = left (launcher on right at x=700), negative = right
+	var force_range = max_launch_force - base_launch_force
+	var force_magnitude = absf(base_launch_force.y) + absf(force_range.y) * current_charge
+	var angle_rad = deg_to_rad(horizontal_launch_angle)
+	var launch_force = Vector2(-sin(angle_rad), -cos(angle_rad)) * force_magnitude
+	ball_to_launch.visible = true
+	if ball_to_launch.has_method("launch_ball"):
+		ball_to_launch.launch_ball(launch_force)
+	else:
+		ball_to_launch.freeze = false
+		ball_to_launch.apply_central_impulse(launch_force)
+	if DEBUG_LAUNCH:
+		print("[Pinball][Launcher] launch force: ", launch_force, " charge: ", current_charge, " magnitude: ", launch_force.length())
+	ball_launched.emit(launch_force)
+	current_charge = 0.0
+	is_charging = false
 	_activate_skill_shot()
-	
-	_ball = null
-	_launch_ready = false
 
 func _activate_skill_shot() -> void:
-	# 查找并激活 SkillShot
 	var skill_shot = get_tree().get_first_node_in_group("skill_shot")
 	if skill_shot and skill_shot.has_method("activate"):
 		skill_shot.activate()
-		print("Launcher: SkillShot 已激活")
+
+func has_ball() -> bool:
+	return current_ball != null and is_instance_valid(current_ball)

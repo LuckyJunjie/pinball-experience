@@ -17,17 +17,17 @@ func _ready() -> void:
 	if replay_button:
 		replay_button.pressed.connect(_on_replay)
 
-func _on_scored(_points: int, _source: String) -> void:
+func _on_scored(_points: int) -> void:
 	_update_hud()
 
-func _on_round_lost(_final_round: int, _mult: int) -> void:
+func _on_round_lost() -> void:
 	_update_hud()
 
-func _on_game_over(final_score: int) -> void:
+func _on_game_over() -> void:
 	_update_hud()
 	game_over_panel.visible = true
 	if game_over_score:
-		game_over_score.text = str(final_score)
+		game_over_score.text = str(GameManager.display_score())
 	if replay_button:
 		replay_button.grab_focus()
 
@@ -36,11 +36,11 @@ func _on_game_started() -> void:
 	game_over_panel.visible = false
 
 func _on_replay() -> void:
-	get_tree().reload_current_scene()
+	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 
 func _update_hud() -> void:
 	if score_label:
-		score_label.text = str(GameManager.get_display_score())
+		score_label.text = str(GameManager.display_score())
 	if multiplier_label:
 		multiplier_label.text = "x%d" % GameManager.multiplier
 	if rounds_label:

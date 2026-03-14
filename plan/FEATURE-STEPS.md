@@ -21,7 +21,7 @@ Evolve the **Phase 0 baseline** to **full requirements** ([../requirements/Requi
 
 ### Step 2.1 – Start flow: initial → play
 
-- **Item:** Initial screen (main menu) with **Play**; Play loads playfield and starts game (status = playing, spawn ball at launcher). Replay after game over returns to same start/play flow.
+- **Item:** Initial screen (main menu) with **Play**; Play loads playfield and starts game (status = playing, spawn ball at launcher). Replay after game over returns to same start/play flow. Scene flow: MainMenu → (Play → Character → How to Play) → Main; Back/Game Over → MainMenu. See [Technical-Structure](../design/Technical-Structure.md).
 - **Refs:** FR-1.1.1, FR-1.1.4, FR-1.1.5 (partial).
 - **Test:** From main menu, press Play → playfield loads, one ball spawns at launcher, status = playing. After game over, Replay → playfield loads again with new game.
 
@@ -64,6 +64,8 @@ Evolve the **Phase 0 baseline** to **full requirements** ([../requirements/Requi
 ---
 
 ## Zones and components (one item per step)
+
+**Five playfield zones** (aligned with Flutter `scenes/zones/`): **Google Gallery**, **Android Acres**, **Dino Desert**, **Flutter Forest**, **Sparky Scorch**. Each zone is a scene under `scenes/zones/` with a script under `scripts/zones/`. Steps below add mechanisms one per step within these zones.
 
 ### Step 2.8 – Google rollovers (5k each)
 

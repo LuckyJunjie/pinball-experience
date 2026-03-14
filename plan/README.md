@@ -7,7 +7,7 @@ This folder describes how we iterate from the **legacy project** to the **target
 ## Purpose
 
 - **Source:** Legacy project at [https://github.com/LuckyJunjie/pin-ball](https://github.com/LuckyJunjie/pin-ball) (archived v3.0 that worked, plus v4.0 in root).
-- **Target:** [../requirements/Requirements.md](../requirements/Requirements.md) and [../design/](../design/) (I/O Pinball–aligned).
+- **Target:** [../requirements/Requirements.md](../requirements/Requirements.md) and [../design/](../design/) (I/O Pinball–aligned). Scene flow and script mapping: [../design/Technical-Structure.md](../design/Technical-Structure.md).
 - **Strategy:** One codebase in this repo; we implement step by step and update the same code (no archived version folders in this project).
 
 ## Documents

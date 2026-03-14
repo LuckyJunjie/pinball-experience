@@ -1,0 +1,117 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/MainMenu.gd" id="1_script"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_script")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.1, 0.1, 0.15, 1)
+
+[node name="PlayPanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -120.0
+offset_right = 200.0
+offset_bottom = 120.0
+
+[node name="VBox" type="VBoxContainer" parent="PlayPanel"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Title" type="Label" parent="PlayPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Pinball Experience"
+
+[node name="PlayButton" type="Button" parent="PlayPanel/VBox"]
+layout_mode = 2
+text = "Play"
+
+[node name="CharacterPanel" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -140.0
+offset_right = 220.0
+offset_bottom = 140.0
+
+[node name="VBox" type="VBoxContainer" parent="CharacterPanel"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="CharacterPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Select Character"
+
+[node name="HBox" type="HBoxContainer" parent="CharacterPanel/VBox"]
+layout_mode = 2
+
+[node name="Character1" type="Button" parent="CharacterPanel/VBox/HBox"]
+layout_mode = 2
+text = "Sparky"
+
+[node name="Character2" type="Button" parent="CharacterPanel/VBox/HBox"]
+layout_mode = 2
+text = "Dino"
+
+[node name="Character3" type="Button" parent="CharacterPanel/VBox/HBox"]
+layout_mode = 2
+text = "Dash"
+
+[node name="Character4" type="Button" parent="CharacterPanel/VBox/HBox"]
+layout_mode = 2
+text = "Android"
+
+[node name="HowToPlayPanel" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -160.0
+offset_right = 220.0
+offset_bottom = 160.0
+
+[node name="VBox" type="VBoxContainer" parent="HowToPlayPanel"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="HowToPlayPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "How to Play"
+
+[node name="Instructions" type="Label" parent="HowToPlayPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Left/A: Left Flipper
+Right/D: Right Flipper
+Space: Launch ball
+Hit targets for points. 3 rounds. Multiplier up to 6x."
+
+[node name="DoneButton" type="Button" parent="HowToPlayPanel/VBox"]
+layout_mode = 2
+text = "Start Game"

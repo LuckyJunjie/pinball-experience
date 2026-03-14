@@ -65,7 +65,7 @@ Replicates the Flutter I/O Pinball game in Godot 4.5.1 and extends it with **Sto
 
 **Scene**: e.g. `scenes/Main.tscn` or `scenes/PinballGame.tscn`
 
-**Node structure** (conceptual). Every **visible** playfield item is listed under its parent so the hierarchy shows where each object lives. Items may be implemented as Node2D, Area2D, StaticBody2D, RigidBody2D, or visual-only (Sprite2D/AnimatedSprite2D) children; the structure is the logical placement for design and implementation.
+**Node structure** (conceptual). There are **five playfield zones**: Google Gallery, Android Acres, Dino Desert, Flutter Forest, Sparky Scorch (aligned with Flutter `scenes/zones/`). Every **visible** playfield item is listed under its parent so the hierarchy shows where each object lives. Items may be implemented as Node2D, Area2D, StaticBody2D, RigidBody2D, or visual-only (Sprite2D/AnimatedSprite2D) children; the structure is the logical placement for design and implementation.
 
 ```
 Main (Node2D)
@@ -254,3 +254,4 @@ Scoring: Zone → GameManager.add_score() → scored signal → UI. Round lost: 
 ## 7. Reuse and Reference
 
 - Reuse Ball.gd, Flipper.gd, Launcher.gd, SoundManager. See [details/Asset-Requirements.md](details/Asset-Requirements.md). Flutter: [flutter-reference/FLUTTER-PINBALL-PARSING.md](flutter-reference/FLUTTER-PINBALL-PARSING.md).
+- **Scene flow and node contracts**: [Technical-Structure](Technical-Structure.md) defines the main-scene tree, MainMenu → Main flow, script-to-scene mapping, node path contracts (e.g. `Camera2D`, `Balls`, `Launcher`, `Playfield/Zones`, `UI/BackToMenuButton`), physics layers, and input actions.

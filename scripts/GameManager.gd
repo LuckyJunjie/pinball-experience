@@ -1,33 +1,68 @@
 extends Node
-## GameManager - central game state (BASELINE 0.5 target-shaped state).
-## roundScore, totalScore, multiplier (1-6), rounds (3), status, bonusHistory.
-## Implements: FR-1.2.x, FR-1.5.x, TR-3.3, TR-3.4
+## GameManager - central game state (rounds, score, multiplier, bonuses).
+## Spawns ball at launcher and notifies Launcher via set_ball(); Drain/ball pool trigger round_lost.
 
-signal scored(points: int, source: String)
-signal round_lost(final_round_score: int, multiplier_val: int)
-signal bonus_activated(bonus_type: String)
-signal multiplier_increased(new_value: int)
-signal game_over(final_score: int)
+enum Status { WAITING, PLAYING, GAME_OVER }
+enum Bonus { GOOGLE_WORD, DASH_NEST, SPARKY_TURBO_CHARGE, DINO_CHOMP, ANDROID_SPACESHIP }
+
+signal scored(points: int)
+signal round_lost()
+signal bonus_activated(bonus: Bonus)
+signal multiplier_increased()
+signal game_over()
 signal game_started()
-signal ball_spawn_requested
+signal zone_ramp_hit(zone_name: String, hit_count: int)
+signal character_theme_changed(theme_key: String)
 
-# State (target-shaped for Phase 2)
+const MAX_SCORE: int = 9999999999
+const INITIAL_ROUNDS: int = 3
+const MAX_MULTIPLIER: int = 6
+const BONUS_BALL_DELAY: float = 5.0
+const RAMP_HITS_PER_MULTIPLIER: int = 5
+
+const BallPoolScript := preload("res://scripts/BallPool.gd")
+const DEBUG_LOGS := true
+
 var round_score: int = 0
 var total_score: int = 0
 var multiplier: int = 1
-var rounds: int = 3
-var status: String = "waiting"  # waiting | playing | gameOver
-var bonus_history: Array[String] = []
+var rounds: int = INITIAL_ROUNDS
+var bonus_history: Array[Bonus] = []
+var status: Status = Status.WAITING
+var balls_container: Node2D = null
+var ball_scene: PackedScene = null:
+	set(value):
+		ball_scene = value
+		_ball_scene_ready = true
+		if balls_container:
+			call_deferred("_initialize_ball_pool")
+var launcher_node: Node = null
+var launcher_spawn_position: Vector2 = Vector2(400, 500)
+var bonus_ball_spawn_position: Vector2 = Vector2(400, 300)
+var bonus_ball_impulse: Vector2 = Vector2(-200, 0)
+var bonus_ball_timer: float = -1.0
+var selected_character_theme: String = "sparky"
 
-# References (set by Main)
-var balls_container: Node2D
-var launcher: Node2D
-var ball_scene: PackedScene
-
-const MAX_SCORE := 9999999999
+var _ball_scene_ready: bool = false
+var zone_ramp_hits: Dictionary = {
+	"android_acres": 0,
+	"dino_desert": 0,
+	"google_gallery": 0,
+	"flutter_forest": 0,
+	"sparky_scorch": 0
+}
 
 func _ready() -> void:
+	add_to_group("game_manager")
 	_add_input_actions()
+	call_deferred("_initialize_ball_pool")
+
+func _process(delta: float) -> void:
+	if bonus_ball_timer > 0.0:
+		bonus_ball_timer -= delta
+		if bonus_ball_timer <= 0.0:
+			bonus_ball_timer = -1.0
+			_spawn_bonus_ball()
 
 func _add_input_actions() -> void:
 	if not InputMap.has_action("flipper_left"):
@@ -48,59 +83,187 @@ func _key(keycode: int) -> InputEventKey:
 	e.keycode = keycode
 	return e
 
-func start_game() -> void:
-	round_score = 0
-	total_score = 0
-	multiplier = 1
-	rounds = 3
-	status = "playing"
-	bonus_history.clear()
-	game_started.emit()
-	spawn_ball_at_launcher()
-
-func spawn_ball_at_launcher() -> void:
-	ball_spawn_requested.emit()
-
-func get_ball_count() -> int:
-	if balls_container == null:
-		return 0
-	return balls_container.get_child_count()
-
-func on_ball_removed() -> void:
-	if get_ball_count() <= 0:
-		on_round_lost()
-
-func on_round_lost() -> void:
-	var final_round := round_score
-	var mult := multiplier
-	total_score += final_round * mult
-	total_score = mini(total_score, MAX_SCORE)
-	round_score = 0
-	multiplier = 1
-	rounds -= 1
-	round_lost.emit(final_round, mult)
-	if rounds <= 0:
-		status = "gameOver"
-		game_over.emit(total_score)
+func _initialize_ball_pool() -> void:
+	if not ball_scene or not balls_container:
+		return
+	var ball_pool = BallPoolScript.get_instance()
+	if ball_pool and not ball_pool.is_initialized():
+		ball_pool.initialize(ball_scene, balls_container)
+	elif ball_pool and ball_pool.is_initialized():
+		pass
 	else:
-		spawn_ball_at_launcher()
+		pass
 
-func add_score(points: int, source: String = "") -> void:
-	if status != "playing":
+func _ensure_ball_pool_initialized() -> void:
+	if ball_scene and balls_container:
+		var ball_pool = BallPoolScript.get_instance()
+		if ball_pool:
+			ball_pool.initialize(ball_scene, balls_container)
+
+func display_score() -> int:
+	return mini(round_score + total_score, MAX_SCORE)
+
+func get_display_score() -> int:
+	return display_score()
+
+func add_score(points: int, _source: String = "") -> void:
+	if status != Status.PLAYING:
 		return
 	round_score += points
 	round_score = mini(round_score, MAX_SCORE)
-	scored.emit(points, source)
+	scored.emit(points)
 
-func get_display_score() -> int:
-	return mini(round_score + total_score, MAX_SCORE)
+func on_round_lost() -> void:
+	if status != Status.PLAYING:
+		return
+	if DEBUG_LOGS:
+		print("[Pinball][GameManager] on_round_lost (rounds was ", rounds, ")")
+	var final_round = round_score * multiplier
+	total_score = mini(total_score + final_round, MAX_SCORE)
+	round_score = 0
+	multiplier = 1
+	rounds = maxi(0, rounds - 1)
+	reset_zone_tracking()
+	round_lost.emit()
+	if rounds <= 0:
+		status = Status.GAME_OVER
+		game_over.emit()
+	else:
+		_spawn_ball_at_launcher()
 
 func increase_multiplier() -> void:
-	if multiplier < 6:
-		multiplier += 1
-		multiplier_increased.emit(multiplier)
+	if status != Status.PLAYING or multiplier >= MAX_MULTIPLIER:
+		return
+	multiplier += 1
+	multiplier_increased.emit()
 
-func add_bonus(bonus_type: String) -> void:
-	if bonus_type not in bonus_history:
-		bonus_history.append(bonus_type)
-	bonus_activated.emit(bonus_type)
+func add_bonus(bonus: Bonus) -> void:
+	bonus_history.append(bonus)
+	bonus_activated.emit(bonus)
+	match bonus:
+		Bonus.GOOGLE_WORD, Bonus.DASH_NEST:
+			bonus_ball_timer = BONUS_BALL_DELAY
+		Bonus.ANDROID_SPACESHIP:
+			add_score(200000)
+		Bonus.DINO_CHOMP:
+			add_score(150000)
+		Bonus.SPARKY_TURBO_CHARGE:
+			add_score(100000)
+
+func register_zone_ramp_hit(zone_name: String) -> void:
+	if status != Status.PLAYING:
+		return
+	if zone_ramp_hits.has(zone_name):
+		zone_ramp_hits[zone_name] += 1
+	else:
+		zone_ramp_hits[zone_name] = 1
+	var hit_count = zone_ramp_hits[zone_name]
+	zone_ramp_hit.emit(zone_name, hit_count)
+	var total_ramp_hits = 0
+	for z in zone_ramp_hits:
+		total_ramp_hits += zone_ramp_hits[z]
+	if total_ramp_hits % RAMP_HITS_PER_MULTIPLIER == 0:
+		increase_multiplier()
+
+func set_character_theme(theme_key: String) -> void:
+	if theme_key in ["sparky", "dino", "dash", "android"]:
+		selected_character_theme = theme_key
+		character_theme_changed.emit(theme_key)
+
+func get_character_theme() -> String:
+	return selected_character_theme
+
+func reset_zone_tracking() -> void:
+	for z in zone_ramp_hits:
+		zone_ramp_hits[z] = 0
+
+func _return_all_balls_to_pool() -> void:
+	var ball_pool = BallPoolScript.get_instance()
+	if ball_pool and ball_pool.is_initialized() and balls_container:
+		for child in balls_container.get_children():
+			if child is RigidBody2D and child.is_in_group("balls"):
+				ball_pool.return_ball(child)
+
+func start_game() -> void:
+	if DEBUG_LOGS:
+		print("[Pinball][GameManager] start_game launcher_spawn_position=%s" % launcher_spawn_position)
+	round_score = 0
+	total_score = 0
+	multiplier = 1
+	rounds = INITIAL_ROUNDS
+	bonus_history.clear()
+	reset_zone_tracking()
+	status = Status.PLAYING
+	_return_all_balls_to_pool()
+	game_started.emit()
+	_spawn_ball_at_launcher()
+
+func get_ball_count() -> int:
+	var ball_pool = BallPoolScript.get_instance()
+	if ball_pool and ball_pool.is_initialized():
+		return ball_pool.get_active_ball_count()
+	if not balls_container:
+		return 0
+	var n := 0
+	for c in balls_container.get_children():
+		if c is RigidBody2D and c.is_in_group("balls"):
+			n += 1
+	return n
+
+func _spawn_ball_at_launcher() -> void:
+	if not ball_scene or not balls_container:
+		if DEBUG_LOGS:
+			print("[Pinball][GameManager] _spawn_ball_at_launcher skipped: no ball_scene or balls_container")
+		return
+	_ensure_ball_pool_initialized()
+	var ball_pool = BallPoolScript.get_instance()
+	var ball: RigidBody2D = null
+	if ball_pool and ball_pool.is_initialized():
+		ball = ball_pool.spawn_ball_at_position(launcher_spawn_position, Vector2.ZERO, true)
+		if DEBUG_LOGS:
+			print("[Pinball][GameManager] _spawn_ball_at_launcher pos=%s ball_valid=%s rounds=%d" % [launcher_spawn_position, ball != null, rounds])
+	if not ball:
+		ball = ball_scene.instantiate()
+		balls_container.add_child(ball)
+		if ball.has_signal("ball_lost"):
+			ball.ball_lost.connect(_on_ball_lost)
+		if DEBUG_LOGS:
+			print("[Pinball][GameManager] spawn direct instantiate")
+	if ball:
+		ball.freeze = true
+		ball.global_position = launcher_spawn_position
+		ball.visible = true
+		if ball.has_method("reset_ball"):
+			ball.reset_ball()
+		if ball.get("initial_position") != null:
+			ball.initial_position = launcher_spawn_position
+		if launcher_node and launcher_node.has_method("set_ball"):
+			launcher_node.set_ball(ball)
+			if DEBUG_LOGS:
+				print("[Pinball][GameManager] set_ball called on launcher")
+		elif DEBUG_LOGS:
+			print("[Pinball][GameManager] WARNING: no launcher_node or set_ball")
+
+func _spawn_bonus_ball() -> void:
+	if not ball_scene or not balls_container:
+		return
+	var ball_pool = BallPoolScript.get_instance()
+	var ball: RigidBody2D = null
+	if ball_pool and ball_pool.is_initialized():
+		ball = ball_pool.spawn_ball_at_position(bonus_ball_spawn_position, bonus_ball_impulse)
+	if not ball:
+		ball = ball_scene.instantiate() as RigidBody2D
+		balls_container.add_child(ball)
+		ball.global_position = bonus_ball_spawn_position
+		if ball.has_method("reset_ball"):
+			ball.reset_ball()
+		if ball.get("initial_position") != null:
+			ball.initial_position = bonus_ball_spawn_position
+		if ball.has_signal("ball_lost"):
+			ball.ball_lost.connect(_on_ball_lost)
+	ball.freeze = false
+	ball.apply_central_impulse(bonus_ball_impulse)
+
+func _on_ball_lost() -> void:
+	if DEBUG_LOGS:
+		print("[Pinball][GameManager] _on_ball_lost signal received")

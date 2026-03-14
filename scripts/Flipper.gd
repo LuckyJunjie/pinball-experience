@@ -2,6 +2,7 @@ extends RigidBody2D
 ## Flipper - left or right flipper. Rotates on input.
 
 @export var is_left: bool = true
+@export var flipper_strength: float = 2200.0
 @export var rest_angle: float = 0.0
 @export var pressed_angle: float = -45.0  # negative for left
 @export var rotation_speed: float = 600.0
@@ -36,3 +37,6 @@ func _physics_process(delta: float) -> void:
 	var diff := _target_angle - rotation_degrees
 	if abs(diff) > 0.5:
 		rotation_degrees += sign(diff) * min(abs(diff), rotation_speed * delta)
+
+func get_flipper_side() -> String:
+	return "left" if is_left else "right"
