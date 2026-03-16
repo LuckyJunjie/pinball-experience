@@ -1,6 +1,79 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/zones/GoogleGallery.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/google_word/letter1/dimmed.png" id="l1_dim"]
+[ext_resource type="Texture2D" path="res://assets/sprites/google_word/letter1/lit.png" id="l1_lit"]
+[ext_resource type="Texture2D" path="res://assets/sprites/google_word/letter2/dimmed.png" id="l2_dim"]
+[ext_resource type="Texture2D" path="res://assets/sprites/google_word/letter2/lit.png" id="l2_lit"]
+[ext_resource type="Texture2D" path="res://assets/sprites/google_word/letter3/dimmed.png" id="l3_dim"]
+[ext_resource type="Texture2D" path="res://assets/sprites/google_word/letter3/lit.png" id="l3_lit"]
+[ext_resource type="Texture2D" path="res://assets/sprites/google_word/letter4/dimmed.png" id="l4_dim"]
+[ext_resource type="Texture2D" path="res://assets/sprites/google_word/letter4/lit.png" id="l4_lit"]
+[ext_resource type="Texture2D" path="res://assets/sprites/google_word/letter5/dimmed.png" id="l5_dim"]
+[ext_resource type="Texture2D" path="res://assets/sprites/google_word/letter5/lit.png" id="l5_lit"]
+[ext_resource type="Texture2D" path="res://assets/sprites/google_word/letter6/dimmed.png" id="l6_dim"]
+[ext_resource type="Texture2D" path="res://assets/sprites/google_word/letter6/lit.png" id="l6_lit"]
+[ext_resource type="Texture2D" path="res://assets/sprites/google_rollover/left/decal.png" id="roll_left"]
+[ext_resource type="Texture2D" path="res://assets/sprites/google_rollover/right/decal.png" id="roll_right"]
+
+[sub_resource type="RectangleShape2D" id="RolloverShape"]
+size = Vector2(40, 25)
 
 [node name="GoogleGallery" type="Node2D"]
 script = ExtResource("1_script")
+
+[node name="GoogleWord" type="Node2D" parent="."]
+
+[node name="Letter1" type="Sprite2D" parent="GoogleWord"]
+position = Vector2(-55, 9)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("l1_dim")
+
+[node name="Letter2" type="Sprite2D" parent="GoogleWord"]
+position = Vector2(-33, 9)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("l2_dim")
+
+[node name="Letter3" type="Sprite2D" parent="GoogleWord"]
+position = Vector2(-11, 9)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("l3_dim")
+
+[node name="Letter4" type="Sprite2D" parent="GoogleWord"]
+position = Vector2(11, 9)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("l4_dim")
+
+[node name="Letter5" type="Sprite2D" parent="GoogleWord"]
+position = Vector2(33, 9)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("l5_dim")
+
+[node name="Letter6" type="Sprite2D" parent="GoogleWord"]
+position = Vector2(55, 9)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("l6_dim")
+
+[node name="RolloverLeft" type="Area2D" parent="."]
+position = Vector2(-75, 9)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RolloverLeft"]
+shape = SubResource("RolloverShape")
+
+[node name="Sprite2D" type="Sprite2D" parent="RolloverLeft"]
+texture = ExtResource("roll_left")
+scale = Vector2(0.2, 0.2)
+
+[node name="RolloverRight" type="Area2D" parent="."]
+position = Vector2(75, 9)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RolloverRight"]
+shape = SubResource("RolloverShape")
+
+[node name="Sprite2D" type="Sprite2D" parent="RolloverRight"]
+texture = ExtResource("roll_right")
+scale = Vector2(0.2, 0.2)

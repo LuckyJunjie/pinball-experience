@@ -13,7 +13,7 @@ signal launch_requested(force: Vector2)  ## Emitted to tell ball to launch (ball
 @export var max_launch_force: Vector2 = Vector2(0, -800)
 @export var charge_rate: float = 2.0
 @export var max_charge: float = 1.0
-@export var horizontal_launch_angle: float = 0.0  # 0 = straight up; positive = launch left toward playfield (launcher on right at x=700)
+@export var horizontal_launch_angle: float = 8.0  # 0 = straight up; positive = launch left toward playfield (launcher on right)
 ## Small offset to avoid ball overlapping launcher/plunger when spawned (prevents physics push on unfreeze)
 @export var spawn_offset: Vector2 = Vector2(-8, 0)  # Left of spawn point (launcher on right)
 

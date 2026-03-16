@@ -143,12 +143,8 @@ func add_bonus(bonus: Bonus) -> void:
 	match bonus:
 		Bonus.GOOGLE_WORD, Bonus.DASH_NEST:
 			bonus_ball_timer = BONUS_BALL_DELAY
-		Bonus.ANDROID_SPACESHIP:
-			add_score(200000)
-		Bonus.DINO_CHOMP:
-			add_score(150000)
-		Bonus.SPARKY_TURBO_CHARGE:
-			add_score(100000)
+		Bonus.ANDROID_SPACESHIP, Bonus.DINO_CHOMP, Bonus.SPARKY_TURBO_CHARGE:
+			pass  # Zone already adds 200k; bonus recorded for history
 
 func register_zone_ramp_hit(zone_name: String) -> void:
 	if status != Status.PLAYING:

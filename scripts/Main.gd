@@ -31,6 +31,8 @@ func _ready() -> void:
 	if gm.game_over.is_connected(_on_game_over) == false:
 		gm.game_over.connect(_on_game_over)
 	_connect_obstacles()
+	if _camera:
+		_camera.make_current()
 	_apply_camera_status(gm.status)
 	get_viewport().gui_release_focus()
 	if gm.has_method("_ensure_ball_pool_initialized"):
@@ -68,22 +70,13 @@ func _on_back_to_menu() -> void:
 func _apply_camera_status(status: int) -> void:
 	if not _camera:
 		return
+	# Full playfield: y 10–610, x 10–790. Launcher/flippers at y ~518–550. Use zoom to fit.
 	var vp := get_viewport().get_visible_rect().size
-	var pos: Vector2
-	var visible_height: float
-	match status:
-		GameManager.Status.WAITING:
-			pos = Vector2(400, 100)
-			visible_height = 175.0
-		GameManager.Status.PLAYING:
-			pos = Vector2(400, 300)
-			visible_height = 160.0
-		GameManager.Status.GAME_OVER:
-			pos = Vector2(400, 100)
-			visible_height = 100.0
-		_:
-			pos = Vector2(400, 300)
-			visible_height = 160.0
-	_camera.position = pos
-	var z := vp.y / visible_height
-	_camera.zoom = Vector2(z, z)
+	var playfield_height: float = 620.0
+	var playfield_width: float = 820.0
+	var zoom_y := vp.y / playfield_height
+	var zoom_x := vp.x / playfield_width
+	var zoom := minf(zoom_x, zoom_y)
+	_camera.zoom = Vector2(zoom, zoom)
+	# Center on playfield (walls 10–790 x, 10–610 y)
+	_camera.position = Vector2(400, 310)

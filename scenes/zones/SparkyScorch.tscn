@@ -1,6 +1,69 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/zones/SparkyScorch.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/sparky/bumper/a/dimmed.png" id="bump_a"]
+[ext_resource type="Texture2D" path="res://assets/sprites/sparky/bumper/b/dimmed.png" id="bump_b"]
+[ext_resource type="Texture2D" path="res://assets/sprites/sparky/bumper/c/dimmed.png" id="bump_c"]
+[ext_resource type="Texture2D" path="res://assets/sprites/sparky/computer/base.png" id="computer_base"]
+
+[sub_resource type="CircleShape2D" id="BumperShape"]
+radius = 25.0
+
+[sub_resource type="RectangleShape2D" id="ComputerShape"]
+size = Vector2(55, 45)
 
 [node name="SparkyScorch" type="Node2D"]
 script = ExtResource("1_script")
+
+[node name="BumperA" type="Area2D" parent="."]
+position = Vector2(-114.5, -208.25)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BumperA"]
+shape = SubResource("BumperShape")
+
+[node name="Sprite2D" type="Sprite2D" parent="BumperA"]
+texture = ExtResource("bump_a")
+scale = Vector2(0.2, 0.2)
+
+[node name="BumperB" type="Area2D" parent="."]
+position = Vector2(-106.25, -289.5)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BumperB"]
+shape = SubResource("BumperShape")
+
+[node name="Sprite2D" type="Sprite2D" parent="BumperB"]
+texture = ExtResource("bump_b")
+scale = Vector2(0.2, 0.2)
+
+[node name="BumperC" type="Area2D" parent="."]
+position = Vector2(-16.5, -262.75)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BumperC"]
+shape = SubResource("BumperShape")
+
+[node name="Sprite2D" type="Sprite2D" parent="BumperC"]
+texture = ExtResource("bump_c")
+scale = Vector2(0.2, 0.2)
+
+[node name="SparkyComputer" type="Area2D" parent="."]
+position = Vector2(-70, -291)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SparkyComputer"]
+shape = SubResource("ComputerShape")
+
+[node name="Sprite2D" type="Sprite2D" parent="SparkyComputer"]
+texture = ExtResource("computer_base")
+scale = Vector2(0.2, 0.2)
+
+[node name="SparkyAnimatronic" type="Sprite2D" parent="."]
+position = Vector2(-70, -291)
+texture = ExtResource("computer_base")
+scale = Vector2(0.15, 0.15)

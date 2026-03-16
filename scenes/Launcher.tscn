@@ -1,13 +1,63 @@
-[gd_scene load_steps=2 format=3 uid="uid://launcher001"]
+[gd_scene load_steps=8 format=3 uid="uid://launcher001"]
 
 [ext_resource type="Script" uid="uid://dj0w2sm8hcfi7" path="res://scripts/Launcher.gd" id="1_launcher"]
+[ext_resource type="Texture2D" path="res://assets/sprites/plunger/rocket.png" id="2_rocket"]
+[ext_resource type="Texture2D" path="res://assets/sprites/launch_ramp/ramp.png" id="3_ramp"]
+[ext_resource type="Texture2D" path="res://assets/sprites/launch_ramp/background_railing.png" id="4_bg_rail"]
+[ext_resource type="Texture2D" path="res://assets/sprites/launch_ramp/foreground_railing.png" id="5_fg_rail"]
+
+[sub_resource type="SegmentShape2D" id="SegmentRight"]
+a = Vector2(-50, -525.5)
+b = Vector2(25.5, 123.5)
+
+[sub_resource type="SegmentShape2D" id="SegmentLeft"]
+a = Vector2(-68, -525.5)
+b = Vector2(0.5, 123.5)
+
+[sub_resource type="SegmentShape2D" id="SegmentFgRight"]
+a = Vector2(-64, -489.5)
+b = Vector2(-11.5, 93.5)
 
 [node name="Launcher" type="Node2D"]
-position = Vector2(50, 550)
 script = ExtResource("1_launcher")
+
+[node name="LaunchRamp" type="Node2D" parent="."]
+
+[node name="LaunchRampBase" type="Sprite2D" parent="LaunchRamp"]
+position = Vector2(-78.75, -215)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("3_ramp")
+
+[node name="BackgroundRailing" type="Sprite2D" parent="LaunchRamp"]
+position = Vector2(-79, -225)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("4_bg_rail")
+
+[node name="ForegroundRailing" type="Sprite2D" parent="LaunchRamp"]
+position = Vector2(-93, -216)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("5_fg_rail"]
+
+[node name="LaunchChannelWalls" type="StaticBody2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+
+[node name="RightWall" type="CollisionShape2D" parent="LaunchChannelWalls"]
+shape = SubResource("SegmentRight")
+
+[node name="LeftWall" type="CollisionShape2D" parent="LaunchChannelWalls"]
+shape = SubResource("SegmentLeft")
+
+[node name="ForegroundWall" type="CollisionShape2D" parent="LaunchChannelWalls"]
+shape = SubResource("SegmentFgRight")
 
 [node name="SpawnPoint" type="Node2D" parent="."]
 position = Vector2(0, -25)
 
 [node name="PlungerVisual" type="Sprite2D" parent="."]
 scale = Vector2(0.15, 0.15)
+
+[node name="RocketSprite" type="Sprite2D" parent="."]
+position = Vector2(9, 93)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("2_rocket")

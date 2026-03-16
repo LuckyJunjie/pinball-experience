@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/Kicker.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/kicker/left/dimmed.png" id="tex_left"]
+
+[sub_resource type="RectangleShape2D" id="KickerShape"]
+size = Vector2(35, 50)
+
+[node name="Kicker" type="Area2D"]
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("1_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("KickerShape")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("tex_left")
+scale = Vector2(0.2, 0.2)

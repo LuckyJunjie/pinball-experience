@@ -1,6 +1,87 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/zones/AndroidAcres.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/android/ramp/main.png" id="ramp_tex"]
+[ext_resource type="Texture2D" path="res://assets/sprites/android/rail/main.png" id="rail_tex"]
+[ext_resource type="Texture2D" path="res://assets/sprites/android/bumper/a/dimmed.png" id="bump_a"]
+[ext_resource type="Texture2D" path="res://assets/sprites/android/bumper/b/dimmed.png" id="bump_b"]
+[ext_resource type="Texture2D" path="res://assets/sprites/android/bumper/cow/dimmed.png" id="bump_cow"]
+[ext_resource type="Texture2D" path="res://assets/sprites/android/spaceship/animatronic.png" id="spaceship_tex"]
+
+[sub_resource type="RectangleShape2D" id="RampShape"]
+size = Vector2(80, 120)
+
+[sub_resource type="RectangleShape2D" id="SpaceshipShape"]
+size = Vector2(50, 40)
+
+[sub_resource type="CircleShape2D" id="BumperShape"]
+radius = 25.0
 
 [node name="AndroidAcres" type="Node2D"]
 script = ExtResource("1_script")
+
+[node name="RampVisual" type="Sprite2D" parent="."]
+position = Vector2(-132.5, -142.5)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("ramp_tex")
+
+[node name="RailVisual" type="Sprite2D" parent="."]
+position = Vector2(-147, -28.5)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("rail_tex")
+
+[node name="SpaceshipRamp" type="Area2D" parent="."]
+position = Vector2(-132.5, -142.5)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SpaceshipRamp"]
+shape = SubResource("RampShape")
+
+[node name="AndroidSpaceship" type="Area2D" parent="."]
+position = Vector2(-132.5, -142.5)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AndroidSpaceship"]
+shape = SubResource("SpaceshipShape")
+
+[node name="SpaceshipSprite" type="Sprite2D" parent="AndroidSpaceship"]
+texture = ExtResource("spaceship_tex")
+scale = Vector2(0.2, 0.2)
+
+[node name="BumperA" type="Area2D" parent="."]
+position = Vector2(-126, 7.5)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BumperA"]
+shape = SubResource("BumperShape")
+
+[node name="Sprite2D" type="Sprite2D" parent="BumperA"]
+texture = ExtResource("bump_a")
+scale = Vector2(0.2, 0.2)
+
+[node name="BumperB" type="Area2D" parent="."]
+position = Vector2(-164.5, -46.5)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BumperB"]
+shape = SubResource("BumperShape")
+
+[node name="Sprite2D" type="Sprite2D" parent="BumperB"]
+texture = ExtResource("bump_b")
+scale = Vector2(0.2, 0.2)
+
+[node name="BumperCow" type="Area2D" parent="."]
+position = Vector2(-103.5, -65)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BumperCow"]
+shape = SubResource("BumperShape")
+
+[node name="Sprite2D" type="Sprite2D" parent="BumperCow"]
+texture = ExtResource("bump_cow")
+scale = Vector2(0.2, 0.2)

@@ -1,6 +1,70 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/zones/FlutterForest.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/signpost/inactive.png" id="signpost_tex"]
+[ext_resource type="Texture2D" path="res://assets/sprites/dash/bumper/main/inactive.png" id="dash_main"]
+[ext_resource type="Texture2D" path="res://assets/sprites/dash/bumper/a/inactive.png" id="dash_a"]
+[ext_resource type="Texture2D" path="res://assets/sprites/dash/bumper/b/inactive.png" id="dash_b"]
+[ext_resource type="Texture2D" path="res://assets/sprites/dash/animatronic.png" id="dash_anim"]
+
+[sub_resource type="CircleShape2D" id="BumperShape"]
+radius = 25.0
+
+[sub_resource type="RectangleShape2D" id="SignpostShape"]
+size = Vector2(40, 50)
 
 [node name="FlutterForest" type="Node2D"]
 script = ExtResource("1_script")
+
+[node name="Signpost" type="Area2D" parent="."]
+position = Vector2(39.75, -291.75)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Signpost"]
+shape = SubResource("SignpostShape")
+
+[node name="Sprite2D" type="Sprite2D" parent="Signpost"]
+texture = ExtResource("signpost_tex")
+scale = Vector2(0.2, 0.2)
+
+[node name="DashBumperMain" type="Area2D" parent="."]
+position = Vector2(92.75, -296.75)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DashBumperMain"]
+shape = SubResource("BumperShape")
+
+[node name="Sprite2D" type="Sprite2D" parent="DashBumperMain"]
+texture = ExtResource("dash_main")
+scale = Vector2(0.2, 0.2)
+
+[node name="DashBumperA" type="Area2D" parent="."]
+position = Vector2(44.75, -259.75)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DashBumperA"]
+shape = SubResource("BumperShape")
+
+[node name="Sprite2D" type="Sprite2D" parent="DashBumperA"]
+texture = ExtResource("dash_a")
+scale = Vector2(0.2, 0.2)
+
+[node name="DashBumperB" type="Area2D" parent="."]
+position = Vector2(109, -233.75)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DashBumperB"]
+shape = SubResource("BumperShape")
+
+[node name="Sprite2D" type="Sprite2D" parent="DashBumperB"]
+texture = ExtResource("dash_b")
+scale = Vector2(0.2, 0.2)
+
+[node name="DashAnimatronic" type="Sprite2D" parent="."]
+position = Vector2(100, -330)
+texture = ExtResource("dash_anim")
+scale = Vector2(0.15, 0.15)
