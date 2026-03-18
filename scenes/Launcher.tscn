@@ -36,7 +36,7 @@ texture = ExtResource("4_bg_rail")
 [node name="ForegroundRailing" type="Sprite2D" parent="LaunchRamp"]
 position = Vector2(-93, -216)
 scale = Vector2(0.1, 0.1)
-texture = ExtResource("5_fg_rail"]
+texture = ExtResource("5_fg_rail")
 
 [node name="LaunchChannelWalls" type="StaticBody2D" parent="."]
 collision_layer = 4
