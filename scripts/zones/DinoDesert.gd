@@ -1,6 +1,6 @@
 extends Node2D
 ## Dino Desert - ChromeDino with animated sprites
-## Uses fixed 5x3 grid for animation frames
+## Uses 8x9 grid (8 columns, 9 rows = 72 frames)
 
 const MOUTH_POINTS := 200000
 
@@ -32,11 +32,11 @@ func _setup_animated_sprites():
 	var mouth_scale_val = mouth_sprite.scale
 	var head_z = head_sprite.z_index
 	
-	# Use 5x3 grid - this divides evenly: 2035x1422 -> 407x474
-	var cols = 5
-	var rows = 3
+	# Use 8x9 grid - this divides evenly: 2035x1422 -> ~254x158 per frame
+	var cols = 8
+	var rows = 9
 	
-	print("[DinoDesert] Using fixed grid: %dx%d" % [cols, rows])
+	print("[DinoDesert] Using 8x9 grid: %dx%d frames" % [cols, rows])
 	
 	# Head animation
 	_head_anim = AnimatedSprite2D.new()
@@ -46,7 +46,7 @@ func _setup_animated_sprites():
 	_head_anim.z_index = head_z
 	
 	var head_frames = _create_sprite_frames(head_tex, "head", cols, rows)
-	head_frames.set_animation_speed("head", 8.0)
+	head_frames.set_animation_speed("head", 12.0)
 	head_frames.set_animation_loop("head", true)
 	_head_anim.sprite_frames = head_frames
 	_head_anim.play("head")
@@ -54,12 +54,12 @@ func _setup_animated_sprites():
 	head_sprite.queue_free()
 	$ChromeDino.add_child(_head_anim)
 	
-	# Mouth animation - overlay on top of head
+	# Mouth animation
 	_mouth_anim = AnimatedSprite2D.new()
 	_mouth_anim.name = "MouthAnim"
 	_mouth_anim.position = mouth_pos
 	_mouth_anim.scale = mouth_scale_val
-	_mouth_anim.z_index = head_z + 1  # Above head
+	_mouth_anim.z_index = head_z + 1
 	
 	var mouth_frames = _create_sprite_frames(mouth_tex, "mouth", cols, rows)
 	mouth_frames.set_animation_speed("mouth", 12.0)
@@ -70,7 +70,7 @@ func _setup_animated_sprites():
 	mouth_sprite.queue_free()
 	$ChromeDino.add_child(_mouth_anim)
 	
-	print("[DinoDesert] Animation setup complete: %d head frames, %d mouth frames" % [head_frames.get_frame_count("head"), mouth_frames.get_frame_count("mouth")])
+	print("[DinoDesert] Done: %d head frames, %d mouth frames" % [head_frames.get_frame_count("head"), mouth_frames.get_frame_count("mouth")])
 
 func _create_sprite_frames(tex: Texture2D, anim_name: String, cols: int, rows: int) -> SpriteFrames:
 	var frames = SpriteFrames.new()
@@ -91,9 +91,8 @@ func _create_sprite_frames(tex: Texture2D, anim_name: String, cols: int, rows: i
 			var x = col * frame_w
 			var y = row * frame_h
 			
-			# Create frame image with transparency
 			var frame = Image.create(frame_w, frame_h, true, Image.FORMAT_RGBA8)
-			frame.fill(Color(0, 0, 0, 0))  # Clear to transparent
+			frame.fill(Color(0, 0, 0, 0))
 			frame.blit_rect(img, Rect2i(x, y, frame_w, frame_h), Vector2i(0, 0))
 			
 			var frame_tex = ImageTexture.create_from_image(frame)
