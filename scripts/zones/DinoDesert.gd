@@ -1,6 +1,6 @@
 extends Node2D
 ## Dino Desert - ChromeDino with animated sprites
-## Uses SpriteFrames to properly animate from sprite sheet
+## Auto-detects sprite sheet frame grid
 
 const MOUTH_POINTS := 200000
 
@@ -32,6 +32,12 @@ func _setup_animated_sprites():
 	var mouth_scale_val = mouth_sprite.scale
 	var head_z = head_sprite.z_index
 	
+	# Detect frame grid automatically
+	var head_grid = _detect_frame_grid(head_tex)
+	var mouth_grid = _detect_frame_grid(mouth_tex)
+	
+	print("[DinoDesert] Detected grid: head=%dx%d, mouth=%dx%d" % [head_grid.x, head_grid.y, mouth_grid.x, mouth_grid.y])
+	
 	# Head animation
 	_head_anim = AnimatedSprite2D.new()
 	_head_anim.name = "HeadAnim"
@@ -39,7 +45,7 @@ func _setup_animated_sprites():
 	_head_anim.scale = head_scale_val
 	_head_anim.z_index = head_z
 	
-	var head_frames = _create_sprite_frames(head_tex, "head", 5, 3)
+	var head_frames = _create_sprite_frames(head_tex, "head", head_grid.x, head_grid.y)
 	head_frames.set_animation_speed("head", 8.0)
 	head_frames.set_animation_loop("head", true)
 	_head_anim.sprite_frames = head_frames
@@ -53,9 +59,9 @@ func _setup_animated_sprites():
 	_mouth_anim.name = "MouthAnim"
 	_mouth_anim.position = mouth_pos
 	_mouth_anim.scale = mouth_scale_val
-	_mouth_anim.z_index = mouth_z()
+	_mouth_anim.z_index = head_z + 1
 	
-	var mouth_frames = _create_sprite_frames(mouth_tex, "mouth", 5, 3)
+	var mouth_frames = _create_sprite_frames(mouth_tex, "mouth", mouth_grid.x, mouth_grid.y)
 	mouth_frames.set_animation_speed("mouth", 12.0)
 	mouth_frames.set_animation_loop("mouth", true)
 	_mouth_anim.sprite_frames = mouth_frames
@@ -64,11 +70,49 @@ func _setup_animated_sprites():
 	mouth_sprite.queue_free()
 	$ChromeDino.add_child(_mouth_anim)
 
-func mouth_z() -> int:
-	var mouth = $ChromeDino/Mouth
-	if mouth:
-		return mouth.z_index
-	return 0
+## Detect frame grid by analyzing sprite sheet
+func _detect_frame_grid(tex: Texture2D) -> Vector2i:
+	var img = tex.get_image()
+	if img == null:
+		return Vector2i(1, 1)
+	
+	var w = img.get_width()
+	var h = img.get_height()
+	
+	# Try common divisors
+	var best = Vector2i(1, 1)
+	var best_count = 0
+	
+	for cols in range(1, 11):
+		for rows in range(1, 11):
+			if cols * rows <= best_count:
+				continue
+			if w % cols == 0 and h % rows == 0:
+				var frame_w = w / cols
+				var frame_h = h / rows
+				# Check if frames have content (non-transparent pixels)
+				var count = _count_nonempty_frames(img, cols, rows, frame_w, frame_h)
+				if count > best_count:
+					best_count = count
+					best = Vector2i(cols, rows)
+	
+	print("[DinoDesert] Detected %d frames (%dx%d)" % [best_count, best.x, best.y])
+	return best
+
+func _count_nonempty_frames(img: Image, cols: int, rows: int, frame_w: int, frame_h: int) -> int:
+	var count = 0
+	for row in range(rows):
+		for col in range(cols):
+			var x = col * frame_w
+			var y = row * frame_h
+			# Sample center of frame
+			var sx = x + frame_w / 2
+			var sy = y + frame_h / 2
+			if sx < img.get_width() and sy < img.get_height():
+				var pixel = img.get_pixel(sx, sy)
+				if pixel.a > 0:
+					count += 1
+	return count
 
 func _create_sprite_frames(tex: Texture2D, anim_name: String, cols: int, rows: int) -> SpriteFrames:
 	var frames = SpriteFrames.new()
