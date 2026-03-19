@@ -101,23 +101,23 @@ shape = SubResource("DrainShape")
 z_index = 1
 
 [node name="GoogleGallery" parent="Playfield/Zones" instance=ExtResource("10_zone_google")]
-position = Vector2(400, 300)
+position = Vector2(650, 150)
 z_index = 0
 
 [node name="AndroidAcres" parent="Playfield/Zones" instance=ExtResource("11_zone_android")]
-position = Vector2(400, 300)
+position = Vector2(150, 200)
 z_index = 0
 
 [node name="DinoDesert" parent="Playfield/Zones" instance=ExtResource("12_zone_dino")]
-position = Vector2(400, 300)
+position = Vector2(650, 350)
 z_index = 0
 
 [node name="FlutterForest" parent="Playfield/Zones" instance=ExtResource("13_zone_flutter")]
-position = Vector2(400, 300)
+position = Vector2(150, 400)
 z_index = 0
 
 [node name="SparkyScorch" parent="Playfield/Zones" instance=ExtResource("14_zone_sparky")]
-position = Vector2(400, 300)
+position = Vector2(400, 280)
 z_index = 0
 
 [node name="Balls" type="Node2D" parent="."]
