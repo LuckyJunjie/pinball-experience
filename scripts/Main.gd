@@ -1,6 +1,18 @@
 extends Node2D
 ## Main - playfield. Wires GameManager (balls, launcher, ball scene), defers start_game.
 
+const ZONE_THEME_MAP := {
+	"sparky": "SparkyScorch",
+	"dino": "DinoDesert",
+	"dash": "FlutterForest",
+	"android": "GoogleGallery"
+}
+
+# Secondary zones that are always visible alongside the main zone
+const SECONDARY_ZONES := {
+	"android": ["AndroidAcres"]
+}
+
 var _camera: Camera2D = null
 
 func _ready() -> void:
@@ -30,13 +42,17 @@ func _ready() -> void:
 		back_btn.pressed.connect(_on_back_to_menu)
 	if gm.game_over.is_connected(_on_game_over) == false:
 		gm.game_over.connect(_on_game_over)
+	if gm.character_theme_changed.isconnected(_on_character_theme_changed) == false:
+		gm.character_theme_changed.connect(_on_character_theme_changed)
 	_connect_obstacles()
+	_connect_combo_manager()
 	if _camera:
 		_camera.make_current()
 	_apply_camera_status(gm.status)
 	get_viewport().gui_release_focus()
 	if gm.has_method("_ensure_ball_pool_initialized"):
 		gm._ensure_ball_pool_initialized()
+	_update_zone_visibility(gm.get_character_theme())
 	call_deferred("_deferred_start_game")
 
 func _deferred_start_game() -> void:
@@ -57,6 +73,13 @@ func _connect_obstacles() -> void:
 		if obs.has_signal("obstacle_hit"):
 			obs.obstacle_hit.connect(_on_obstacle_hit)
 
+func _connect_combo_manager() -> void:
+	var gm = get_node_or_null("/root/GameManager")
+	var combo = get_tree().get_first_node_in_group("combo_manager")
+	if gm and combo and gm.has_signal("scored"):
+		gm.scored.connect(combo.increase_combo)
+		print("[Main] ComboManager connected to GameManager.scored")
+
 func _on_obstacle_hit(points: int) -> void:
 	var gm = get_node_or_null("/root/GameManager")
 	if gm and gm.has_method("add_score"):
@@ -66,6 +89,28 @@ func _on_obstacle_hit(points: int) -> void:
 
 func _on_back_to_menu() -> void:
 	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
+
+func _on_character_theme_changed(theme_key: String) -> void:
+	_update_zone_visibility(theme_key)
+
+func _update_zone_visibility(active_theme: String) -> void:
+	var zones_node = get_node_or_null("Playfield/Zones")
+	if not zones_node:
+		return
+	
+	var active_zone_name = ZONE_THEME_MAP.get(active_theme, "")
+	var secondary_zones = SECONDARY_ZONES.get(active_theme, [])
+	
+	for child in zones_node.get_children():
+		if child is Node2D:
+			# Hide all zones by default, only show the active one and its secondary zones
+			var is_primary = (child.name == active_zone_name)
+			var is_secondary = (child.name in secondary_zones)
+			child.visible = is_primary or is_secondary
+			if child.visible:
+				print("[Main] Zone visible: ", child.name, " (primary=", is_primary, ", secondary=", is_secondary, ")")
+			else:
+				print("[Main] Zone hidden: ", child.name)
 
 func _apply_camera_status(status: int) -> void:
 	if not _camera:
