@@ -38,11 +38,11 @@ func _setup_animated_sprites():
 	var head_tex = load("res://assets/sprites/dino/animatronic/head.png")
 	var mouth_tex = load("res://assets/sprites/dino/animatronic/mouth.png")
 	
-	# Use 8x9 grid
-	var cols = 8
+	# Use 5x9 grid - 2035 divisible by 5, 1422 divisible by 9
+	var cols = 5
 	var rows = 9
 	
-	print("[DinoDesert] Creating 8x9 animation, scale=0.6, pos=(-39,0)")
+	print("[DinoDesert] Creating 5x9 animation (45 frames), scale=0.6, pos=(-39,0)")
 	
 	# Head animation
 	_head_anim = AnimatedSprite2D.new()
@@ -73,7 +73,7 @@ func _setup_animated_sprites():
 	
 	chrome_dino.add_child(_mouth_anim)
 	
-	print("[DinoDesert] Done: 72 frames each, scale=0.6, moved left 100px")
+	print("[DinoDesert] Done: 45 frames each, scale=0.6, moved left 100px")
 
 func _create_sprite_frames(tex: Texture2D, anim_name: String, cols: int, rows: int) -> SpriteFrames:
 	var frames = SpriteFrames.new()
