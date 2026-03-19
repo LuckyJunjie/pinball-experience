@@ -1,6 +1,6 @@
 extends Node2D
 ## Dino Desert - ChromeDino with animated sprites
-## Uses 8x9 grid (8 columns, 9 rows = 72 frames)
+## 8x9 grid (72 frames), scaled 3x, moved left 100px
 
 const MOUTH_POINTS := 200000
 
@@ -17,33 +17,38 @@ func _ready() -> void:
 		_mouth_sensor.body_entered.connect(_on_mouth_entered)
 
 func _setup_animated_sprites():
-	var head_sprite = $ChromeDino/Head
-	var mouth_sprite = $ChromeDino/Mouth
+	var chrome_dino = $ChromeDino
 	
-	if not head_sprite or not mouth_sprite:
-		return
+	# Remove ALL existing sprites first to avoid residuals
+	var children = chrome_dino.get_children()
+	for child in children:
+		if child is Sprite2D or child is AnimatedSprite2D:
+			child.queue_free()
 	
-	var head_tex = head_sprite.texture
-	var mouth_tex = mouth_sprite.texture
+	# Wait a frame for queue_free to process
+	await get_tree().process_frame
 	
-	var head_pos = head_sprite.position
-	var head_scale_val = head_sprite.scale
-	var mouth_pos = mouth_sprite.position
-	var mouth_scale_val = mouth_sprite.scale
-	var head_z = head_sprite.z_index
+	# Get original values from scene (before removal)
+	var head_pos = Vector2(-39, 0)  # Moved left 100px: 61 -> -39
+	var head_scale_val = Vector2(0.6, 0.6)  # 3x: 0.2 -> 0.6
+	var mouth_pos = Vector2(-39 + 0, 15)  # Relative to head
+	var mouth_scale_val = Vector2(0.6, 0.6)
 	
-	# Use 8x9 grid - this divides evenly: 2035x1422 -> ~254x158 per frame
+	# Get textures
+	var head_tex = load("res://assets/sprites/dino/animatronic/head.png")
+	var mouth_tex = load("res://assets/sprites/dino/animatronic/mouth.png")
+	
+	# Use 8x9 grid
 	var cols = 8
 	var rows = 9
 	
-	print("[DinoDesert] Using 8x9 grid: %dx%d frames" % [cols, rows])
+	print("[DinoDesert] Creating 8x9 animation, scale=0.6, pos=(-39,0)")
 	
 	# Head animation
 	_head_anim = AnimatedSprite2D.new()
 	_head_anim.name = "HeadAnim"
 	_head_anim.position = head_pos
 	_head_anim.scale = head_scale_val
-	_head_anim.z_index = head_z
 	
 	var head_frames = _create_sprite_frames(head_tex, "head", cols, rows)
 	head_frames.set_animation_speed("head", 12.0)
@@ -51,15 +56,14 @@ func _setup_animated_sprites():
 	_head_anim.sprite_frames = head_frames
 	_head_anim.play("head")
 	
-	head_sprite.queue_free()
-	$ChromeDino.add_child(_head_anim)
+	chrome_dino.add_child(_head_anim)
 	
 	# Mouth animation
 	_mouth_anim = AnimatedSprite2D.new()
 	_mouth_anim.name = "MouthAnim"
 	_mouth_anim.position = mouth_pos
 	_mouth_anim.scale = mouth_scale_val
-	_mouth_anim.z_index = head_z + 1
+	_mouth_anim.z_index = 1
 	
 	var mouth_frames = _create_sprite_frames(mouth_tex, "mouth", cols, rows)
 	mouth_frames.set_animation_speed("mouth", 12.0)
@@ -67,10 +71,9 @@ func _setup_animated_sprites():
 	_mouth_anim.sprite_frames = mouth_frames
 	_mouth_anim.play("mouth")
 	
-	mouth_sprite.queue_free()
-	$ChromeDino.add_child(_mouth_anim)
+	chrome_dino.add_child(_mouth_anim)
 	
-	print("[DinoDesert] Done: %d head frames, %d mouth frames" % [head_frames.get_frame_count("head"), mouth_frames.get_frame_count("mouth")])
+	print("[DinoDesert] Done: 72 frames each, scale=0.6, moved left 100px")
 
 func _create_sprite_frames(tex: Texture2D, anim_name: String, cols: int, rows: int) -> SpriteFrames:
 	var frames = SpriteFrames.new()
